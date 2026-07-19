@@ -20,6 +20,24 @@ export default function SignupPage({ searchParams }: { searchParams: { message: 
 
         <form action={signup} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div>
+            <label htmlFor="full_name" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Full Name</label>
+            <input 
+              id="full_name"
+              name="full_name"
+              type="text" 
+              required
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-sans)'
+              }}
+            />
+          </div>
+          <div>
             <label htmlFor="email" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Email</label>
             <input 
               id="email"

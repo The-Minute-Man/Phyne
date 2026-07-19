@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/home')
 }
 
 export async function signup(formData: FormData) {
@@ -29,15 +29,23 @@ export async function signup(formData: FormData) {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
+  const fullName = formData.get('full_name') as string
 
-  const { error } = await supabase.auth.signUp(data)
+  const { error } = await supabase.auth.signUp({
+    ...data,
+    options: {
+      data: {
+        full_name: fullName
+      }
+    }
+  })
 
   if (error) {
     redirect(`/signup?message=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/home')
 }
 
 export async function logout() {

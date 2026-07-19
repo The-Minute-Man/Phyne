@@ -53,9 +53,13 @@ export default async function RootLayout({
                 <Link href="/#modules" className="nav-link">Curriculum</Link>
                 
                 {user ? (
-                  <form action={logout} style={{ display: 'inline', margin: 0 }}>
-                    <button type="submit" className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem' }}>Log Out</button>
-                  </form>
+                  <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                    <Link href="/home" className="nav-link">Dashboard</Link>
+                    <Link href="/profile" className="nav-link">Profile</Link>
+                    <form action={logout} style={{ display: 'inline', margin: 0 }}>
+                      <button type="submit" className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem' }}>Log Out</button>
+                    </form>
+                  </div>
                 ) : (
                   <div style={{ display: 'flex', gap: '1rem' }}>
                     <Link href="/login" className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem' }}>Log In</Link>
