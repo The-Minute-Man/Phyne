@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/utils/supabase/server';
 import { logout } from '@/app/auth/actions';
 
@@ -42,19 +43,17 @@ export default async function RootLayout({
             backdropFilter: 'blur(10px)',
             zIndex: 100
           }}>
-            <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.5px' }}>
-                <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-                  <span style={{ 
-                    display: 'inline-block', 
-                    transform: 'rotate(45deg)', 
-                    color: '#f5f5f5', 
-                    fontSize: '1.8rem',
-                    lineHeight: 1,
-                    fontStyle: 'italic'
-                  }}>
-                    φ
-                  </span>
+            <Link href="/" style={{ position: 'absolute', left: '1.5rem', top: '50%', transform: 'translateY(-50%)', zIndex: 101 }}>
+              <Image 
+                src="/Phi_v6.png" 
+                alt="Phyne Logo" 
+                width={48} 
+                height={48}
+              />
+            </Link>
+            <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.5px', marginLeft: '3rem' }}>
+                <Link href="/" style={{ textDecoration: 'none' }}>
                   <span>PHY<span style={{ color: 'var(--text-secondary)' }}>NE</span></span>
                 </Link>
               </div>
