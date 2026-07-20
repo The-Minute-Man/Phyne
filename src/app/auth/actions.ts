@@ -22,7 +22,11 @@ export async function login(prevState: ActionState, formData: FormData): Promise
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    return { error: error.message, success: false }
+    let errorMsg = error.message;
+    if (!errorMsg || errorMsg === '{}') {
+      errorMsg = "Invalid login credentials.";
+    }
+    return { error: errorMsg, success: false }
   }
 
   revalidatePath('/', 'layout')
@@ -48,7 +52,14 @@ export async function signup(prevState: ActionState, formData: FormData): Promis
   })
 
   if (error) {
-    return { error: error.message, success: false }
+    let errorMsg = error.message;
+    if (!errorMsg || errorMsg === '{}') {
+      errorMsg = JSON.stringify(error);
+    }
+    if (errorMsg === '{}') {
+      errorMsg = "An error occurred during signup. The email might already be registered.";
+    }
+    return { error: errorMsg, success: false }
   }
 
   revalidatePath('/', 'layout')
