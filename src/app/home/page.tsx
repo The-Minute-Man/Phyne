@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function LearnerHome() {
   const supabase = await createClient();
@@ -47,39 +48,129 @@ export default async function LearnerHome() {
         {/* Curriculum Roadmap */}
         <section className="glass-panel fade-in delay-2" style={{ padding: '2rem' }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
-            Course Goals & Sub-steps
+            <Link href="/roadmap" style={{ color: '#10b981', textDecoration: 'none' }} className="hover-lift" title="Click for full planner">
+              Curriculum Roadmap
+            </Link>
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxHeight: '400px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             
-            <div>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--accent)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                AP Physics C: Mechanics
-              </h3>
-              <ul style={{ listStyleType: 'none', paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-secondary)' }}>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 1:</span> Kinematics (Drag Force Differential)</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 2:</span> Newton's Laws of Motion</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 3:</span> Work, Energy, and Power (Energy Landscapes)</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 4:</span> Systems of Particles & Linear Momentum</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 5:</span> Rotation (Rolling Without Slipping)</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 6:</span> Oscillations (Physical Pendulums)</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 7:</span> Gravitation</li>
-              </ul>
-            </div>
+            <details open>
+              <summary style={{ cursor: 'pointer', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', outline: 'none' }}>
+                <h3 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--text-primary)' }}>
+                  Mechanics
+                </h3>
+              </summary>
+              <div style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+                
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 1: Kinematics</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>1D & 2D Motion</li>
+                    <li>Projectile Motion</li>
+                    <li>Drag Force Differential (Interactive)</li>
+                  </ul>
+                </details>
+                
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 2: Newton's Laws</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Free Body Diagrams</li>
+                    <li>Friction & Circular Motion</li>
+                  </ul>
+                </details>
+                
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 3: Work, Energy, Power</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Work-Energy Theorem</li>
+                    <li>Energy Landscapes (Interactive)</li>
+                  </ul>
+                </details>
 
-            <div>
-              <h3 style={{ fontSize: '1.1rem', color: '#10b981', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                AP Physics C: E&M
-              </h3>
-              <ul style={{ listStyleType: 'none', paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-secondary)' }}>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 1:</span> Electrostatics (Gauss's Law Architect)</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 2:</span> Conductors, Capacitors, Dielectrics</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 3:</span> Electric Circuits (RC Differential Equations)</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 4:</span> Magnetic Fields (Biot-Savart Builders)</li>
-                <li><span style={{ color: 'var(--text-primary)' }}>Unit 5:</span> Electromagnetism (Faraday & Lenz's Law)</li>
-              </ul>
-            </div>
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 4: Systems of Particles</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Center of Mass</li>
+                    <li>Linear Momentum & Collisions</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 5: Rotation</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Torque & Rotational Inertia</li>
+                    <li>Rolling Without Slipping (Interactive)</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 6: Oscillations</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Simple Harmonic Motion</li>
+                    <li>Physical Pendulums (Interactive)</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 7: Gravitation</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Kepler's Laws & Orbits</li>
+                  </ul>
+                </details>
+
+              </div>
+            </details>
+
+            <details open>
+              <summary style={{ cursor: 'pointer', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', outline: 'none' }}>
+                <h3 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--text-primary)' }}>
+                  Electricity & Magnetism
+                </h3>
+              </summary>
+              <div style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+                
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 1: Electrostatics</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Electric Charge & Force</li>
+                    <li>Electric Fields & Gauss's Law (Interactive)</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 2: Conductors & Capacitors</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Electrostatic Potential</li>
+                    <li>Dielectrics</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 3: Electric Circuits</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Current & Resistance</li>
+                    <li>RC Differential Equations (Interactive)</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 4: Magnetic Fields</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Magnetic Force</li>
+                    <li>Biot-Savart Builders (Interactive)</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 5: Electromagnetism</summary>
+                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                    <li>Faraday & Lenz's Law (Interactive)</li>
+                    <li>Inductance</li>
+                  </ul>
+                </details>
+
+              </div>
+            </details>
 
           </div>
         </section>

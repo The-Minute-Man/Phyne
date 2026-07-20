@@ -145,3 +145,20 @@ export async function updatePassword(prevState: ActionState, formData: FormData)
 
   return { message: "Password updated successfully.", success: true }
 }
+
+export async function updateRoadmapDates(startDate: string, endDate: string) {
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      roadmap_start: startDate,
+      roadmap_end: endDate
+    }
+  })
+
+  if (error) {
+    return { error: error.message, success: false }
+  }
+
+  revalidatePath('/', 'layout')
+  return { success: true }
+}
