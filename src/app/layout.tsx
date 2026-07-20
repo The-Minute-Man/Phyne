@@ -44,8 +44,18 @@ export default async function RootLayout({
           }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.5px' }}>
-                <Link href="/">
-                  PHY<span style={{ color: 'var(--text-secondary)' }}>NE</span>
+                <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
+                  <span style={{ 
+                    display: 'inline-block', 
+                    transform: 'rotate(45deg)', 
+                    color: '#f5f5f5', 
+                    fontSize: '1.8rem',
+                    lineHeight: 1,
+                    fontStyle: 'italic'
+                  }}>
+                    φ
+                  </span>
+                  <span>PHY<span style={{ color: 'var(--text-secondary)' }}>NE</span></span>
                 </Link>
               </div>
               <div style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem', fontWeight: 500, alignItems: 'center' }}>
