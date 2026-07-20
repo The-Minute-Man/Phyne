@@ -15,7 +15,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -31,7 +31,7 @@ export async function updateSession(request: NextRequest) {
   // from crashing the Next.js dev server if the refresh token is missing or invalid.
   try {
     await supabase.auth.getUser()
-  } catch (err) {
+  } catch (_err) {
     // Silently ignore AuthApiError to prevent console spam
   }
 

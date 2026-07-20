@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { updateEmail, updatePassword } from '../auth/actions';
 import { createClient } from '@/utils/supabase/client';
 import { useFormStatus } from 'react-dom';
+import type { User } from '@supabase/supabase-js';
 
 function EmailSubmit() {
   const { pending } = useFormStatus();
@@ -27,7 +28,7 @@ export default function ProfilePage() {
   const [emailState, emailAction] = useActionState(updateEmail, null);
   const [passwordState, passwordAction] = useActionState(updatePassword, null);
   
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {

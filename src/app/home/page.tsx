@@ -72,7 +72,7 @@ export default async function LearnerHome() {
                 </details>
                 
                 <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 2: Newton's Laws</summary>
+                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 2: Newton&apos;s Laws</summary>
                   <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
                     <li>Free Body Diagrams</li>
                     <li>Friction & Circular Motion</li>
@@ -114,7 +114,7 @@ export default async function LearnerHome() {
                 <details>
                   <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 7: Gravitation</summary>
                   <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Kepler's Laws & Orbits</li>
+                    <li>Kepler&apos;s Laws & Orbits</li>
                   </ul>
                 </details>
 
@@ -133,7 +133,7 @@ export default async function LearnerHome() {
                   <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 1: Electrostatics</summary>
                   <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
                     <li>Electric Charge & Force</li>
-                    <li>Electric Fields & Gauss's Law (Interactive)</li>
+                    <li>Electric Fields & Gauss&apos;s Law (Interactive)</li>
                   </ul>
                 </details>
 
@@ -164,7 +164,7 @@ export default async function LearnerHome() {
                 <details>
                   <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 5: Electromagnetism</summary>
                   <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Faraday & Lenz's Law (Interactive)</li>
+                    <li>Faraday & Lenz&apos;s Law (Interactive)</li>
                     <li>Inductance</li>
                   </ul>
                 </details>
