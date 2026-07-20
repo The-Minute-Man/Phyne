@@ -36,18 +36,19 @@ export async function login(prevState: ActionState, formData: FormData): Promise
 export async function signup(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient()
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
   const fullName = formData.get('full_name') as string
+  const origin = (await headers()).get('origin')
 
-  const { error } = await supabase.auth.signUp({
-    ...data,
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
     options: {
       data: {
         full_name: fullName
-      }
+      },
+      emailRedirectTo: `${origin}/auth/callback`,
     }
   })
 
@@ -60,6 +61,15 @@ export async function signup(prevState: ActionState, formData: FormData): Promis
       errorMsg = "An error occurred during signup. The email might already be registered.";
     }
     return { error: errorMsg, success: false }
+  }
+
+  if (data?.user && data.user.identities && data.user.identities.length === 0) {
+    return { error: "An error occurred during signup. The email might already be registered.", success: false }
+  }
+
+  // If email confirmation is enabled, the session will be null
+  if (!data.session) {
+    return { message: "Success! Please check your email inbox to verify your account.", success: true }
   }
 
   revalidatePath('/', 'layout')

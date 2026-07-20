@@ -96,7 +96,13 @@ export default function SignupPage() {
             </p>
           )}
 
-          <SubmitButton />
+          {state?.message && (
+            <div style={{ color: '#10b981', fontSize: '0.95rem', textAlign: 'center', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+              {state.message}
+            </div>
+          )}
+
+          {!state?.success && <SubmitButton />}
         </form>
 
         <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
