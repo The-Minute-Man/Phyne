@@ -16,7 +16,7 @@ export default async function LearnerHome() {
     <div className="container" style={{ padding: '4rem 2rem' }}>
       <header className="fade-in" style={{ marginBottom: '4rem' }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', marginBottom: '0.5rem' }}>
-          Welcome back, <span style={{ color: 'var(--accent)' }}>{fullName}</span>
+          Welcome, <span style={{ color: 'var(--accent)' }}>{fullName}</span>
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
           Pick up where you left off in your physics journey.
@@ -34,14 +34,14 @@ export default async function LearnerHome() {
             <div style={{ padding: '1rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <span style={{ fontWeight: 600 }}>Kinematics & Dynamics</span>
-                <span style={{ color: 'var(--accent)', fontSize: '0.9rem' }}>45%</span>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>0%</span>
               </div>
               <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--border)', borderRadius: '3px', overflow: 'hidden' }}>
-                <div style={{ width: '45%', height: '100%', backgroundColor: 'var(--accent)' }}></div>
+                <div style={{ width: '0%', height: '100%', backgroundColor: 'var(--accent)' }}></div>
               </div>
             </div>
           </div>
-          <button className="btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>Continue Module</button>
+          <button className="btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>Start Module</button>
         </section>
 
         {/* Recent Progress */}
@@ -49,20 +49,9 @@ export default async function LearnerHome() {
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
             Recent Activity
           </h2>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem', color: 'var(--text-secondary)' }}>
-            <li style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent)' }}></div>
-              <span>Completed "Drag Force Differential"</span>
-            </li>
-            <li style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--border)' }}></div>
-              <span>Started "Energy Landscapes"</span>
-            </li>
-            <li style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--border)' }}></div>
-              <span>Review: Free Body Diagrams</span>
-            </li>
-          </ul>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textAlign: 'center', padding: '2rem 0' }}>
+            No recent activity yet. Start a module!
+          </div>
         </section>
 
       </div>
