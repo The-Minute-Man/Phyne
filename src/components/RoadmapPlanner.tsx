@@ -58,7 +58,7 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
   const pPanel = mapProgress(effectiveProgress, 0.0, 0.4);
 
   return (
-    <div ref={ref} style={{ 
+    <div className="timeline-node" ref={ref} style={{ 
       position: 'relative', 
       display: 'flex', 
       alignItems: 'flex-start', // Fixed: flex-start ensures the dot and line stay anchored when accordion expands
@@ -69,7 +69,7 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
       
       {/* CSS Border Connector for S-Curve */}
       {!isLast && (
-        <div style={{
+        <div className="timeline-connector" style={{
           position: 'absolute',
           top: '6rem', // Fixed: explicit offset aligns exactly with the dot and doesn't break when row expands
           [isLeft ? 'left' : 'right']: '50%',
@@ -89,7 +89,7 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
       )}
 
       {/* Connecting Dot */}
-      <div style={{
+      <div className="timeline-dot" style={{
         position: 'absolute',
         left: '50%',
         top: '6rem', // Fixed: explicit offset matches the line start
@@ -104,7 +104,7 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
       }} />
 
       {/* Module Box Container */}
-      <div style={{ 
+      <div className="timeline-box-container" style={{ 
         width: '50%', 
         display: 'flex', 
         justifyContent: isLeft ? 'flex-end' : 'flex-start',
@@ -112,7 +112,7 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
         zIndex: 3 
       }}>
         {/* Interactive Accordion Box */}
-        <div className="hover-lift" style={{
+        <div className="hover-lift timeline-box" style={{
           width: '100%',
           maxWidth: '450px',
           border: '1px solid rgba(255,255,255,0.1)',
@@ -266,7 +266,7 @@ export default function RoadmapPlanner({
       </div>
 
       {/* Settings Panel Moved to the Bottom */}
-      <div className="glass-panel fade-in" style={{ position: 'relative', zIndex: 50, padding: '2rem', marginTop: '4rem', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-end', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.2)' }}>
+      <div className="glass-panel fade-in settings-panel" style={{ position: 'relative', zIndex: 50, padding: '2rem', marginTop: '4rem', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-end', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.2)' }}>
         <DatePicker 
           label="Start Date"
           value={startDate}
@@ -300,6 +300,40 @@ export default function RoadmapPlanner({
         }
         @keyframes fadeInSlide {
           to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Mobile overrides */
+        @media (max-width: 768px) {
+          .timeline-node {
+            justify-content: flex-end !important;
+          }
+          .timeline-connector {
+            left: 20px !important;
+            right: auto !important;
+            width: 0 !important;
+            border-right: none !important;
+            border-left: 3px solid white !important;
+            border-radius: 0 !important;
+          }
+          .timeline-dot {
+            left: 20px !important;
+          }
+          .timeline-box-container {
+            width: 100% !important;
+            padding: 4rem 1rem 4rem 3.5rem !important;
+            justify-content: flex-start !important;
+          }
+          .timeline-box {
+            transform: translateX(0) !important;
+          }
+          .settings-panel {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 1.5rem !important;
+          }
+          .settings-panel > button {
+            width: 100% !important;
+          }
         }
       `}} />
     </div>

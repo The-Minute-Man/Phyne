@@ -47,7 +47,7 @@ export default function Home() {
           }}>
             AP Physics C Platform
           </div>
-          <h1 style={{ 
+          <h1 className="hero-title" style={{ 
             fontFamily: 'var(--font-display)', 
             fontSize: '4.5rem', 
             fontWeight: 700, 
@@ -58,7 +58,7 @@ export default function Home() {
             Master University-Level<br />
             <span style={{ color: 'var(--text-secondary)' }}>Physics</span>
           </h1>
-          <p style={{ 
+          <p className="hero-subtitle" style={{ 
             fontSize: '1.25rem', 
             color: 'var(--text-secondary)', 
             maxWidth: '600px', 
@@ -67,9 +67,9 @@ export default function Home() {
           }}>
             An interactive, scaffolded digital experience translating extreme rigor into an accessible learning journey.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button className="btn-primary">Explore Curriculum</button>
-            <button className="btn-secondary">View Architecture</button>
+          <div className="hero-buttons" style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <Link href="#modules" className="btn-primary" style={{ textDecoration: 'none' }}>Explore Curriculum</Link>
+            <Link href="#engines" className="btn-secondary" style={{ textDecoration: 'none' }}>View Architecture</Link>
           </div>
         </div>
       </section>
@@ -129,7 +129,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
+          <div className="modules-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
             <div>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
                 Mechanics (Sep - Dec)
@@ -208,6 +208,31 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        /* Mobile overrides */
+        @media (max-width: 768px) {
+          .hero-title {
+            font-size: 2.5rem !important;
+            letter-spacing: -0.5px !important;
+          }
+          .hero-subtitle {
+            font-size: 1rem !important;
+            padding: 0 1rem !important;
+          }
+          .hero-buttons {
+            flex-direction: column !important;
+            padding: 0 1rem !important;
+          }
+          .hero-buttons > a {
+            width: 100% !important;
+            text-align: center !important;
+          }
+          .modules-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}} />
     </>
   );
 }
