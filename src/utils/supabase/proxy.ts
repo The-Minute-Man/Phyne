@@ -27,8 +27,13 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // refreshing the auth token
-  await supabase.auth.getUser()
+  // Refreshing the auth token. We wrap in try/catch to prevent unhandled promise rejections
+  // from crashing the Next.js dev server if the refresh token is missing or invalid.
+  try {
+    await supabase.auth.getUser()
+  } catch (err) {
+    // Silently ignore AuthApiError to prevent console spam
+  }
 
   return supabaseResponse
 }

@@ -69,7 +69,7 @@ export async function signup(prevState: ActionState, formData: FormData): Promis
 
   // If email confirmation is enabled, the session will be null
   if (!data.session) {
-    return { message: "Success! Please check your email inbox to verify your account.", success: true }
+    return { message: "Success! Please check your email inbox (and Spam folder) to verify your account.", success: true }
   }
 
   revalidatePath('/', 'layout')
