@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { combinedUnits } from '@/data/curriculum';
 
 export default async function LearnerHome() {
   const supabase = await createClient();
@@ -34,7 +35,7 @@ export default async function LearnerHome() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ padding: '1rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontWeight: 600 }}>Kinematics & Dynamics</span>
+                <span style={{ fontWeight: 600 }}>Kinematics</span>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>0%</span>
               </div>
               <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--border)', borderRadius: '3px', overflow: 'hidden' }}>
@@ -54,123 +55,39 @@ export default async function LearnerHome() {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             
-            <details open>
-              <summary style={{ cursor: 'pointer', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', outline: 'none' }}>
-                <h3 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--text-primary)' }}>
-                  Mechanics
-                </h3>
-              </summary>
-              <div style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
-                
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 1: Kinematics</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>1D & 2D Motion</li>
-                    <li>Projectile Motion</li>
-                    <li>Drag Force Differential (Interactive)</li>
-                  </ul>
-                </details>
-                
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 2: Newton&apos;s Laws</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Free Body Diagrams</li>
-                    <li>Friction & Circular Motion</li>
-                  </ul>
-                </details>
-                
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 3: Work, Energy, Power</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Work-Energy Theorem</li>
-                    <li>Energy Landscapes (Interactive)</li>
-                  </ul>
-                </details>
+            {['Mechanics', 'Electricity & Magnetism', 'AP Skills'].map((courseName) => (
+              <details open key={courseName}>
+                <summary style={{ cursor: 'pointer', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', outline: 'none' }}>
+                  <h3 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--text-primary)' }}>
+                    {courseName}
+                  </h3>
+                </summary>
+                <div style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+                  
+                  {combinedUnits.filter(u => u.course === courseName).map((unit, i) => (
+                    <details key={i}>
+                      <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>{unit.unitTitle}</summary>
+                      <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
+                        {unit.lessons.map((lesson, j) => {
+                          const title = typeof lesson === 'string' ? lesson : lesson.title;
+                          const displayTitle = typeof lesson === 'string' ? title.replace(' (Interactive)', '') : title;
+                          const isInteractive = typeof lesson === 'string' ? title.includes('(Interactive)') : lesson.isInteractive;
+                          return (
+                            <li key={j} style={{ marginBottom: '0.25rem' }}>
+                              {displayTitle}
+                              {isInteractive && (
+                                <span style={{ marginLeft: '0.5rem', fontSize: '0.65rem', padding: '0.1rem 0.4rem', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981', borderRadius: '4px', fontWeight: 600 }}>Interactive</span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </details>
+                  ))}
 
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 4: Systems of Particles</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Center of Mass</li>
-                    <li>Linear Momentum & Collisions</li>
-                  </ul>
-                </details>
-
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 5: Rotation</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Torque & Rotational Inertia</li>
-                    <li>Rolling Without Slipping (Interactive)</li>
-                  </ul>
-                </details>
-
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 6: Oscillations</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Simple Harmonic Motion</li>
-                    <li>Physical Pendulums (Interactive)</li>
-                  </ul>
-                </details>
-
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 7: Gravitation</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Kepler&apos;s Laws & Orbits</li>
-                  </ul>
-                </details>
-
-              </div>
-            </details>
-
-            <details open>
-              <summary style={{ cursor: 'pointer', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', outline: 'none' }}>
-                <h3 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--text-primary)' }}>
-                  Electricity & Magnetism
-                </h3>
-              </summary>
-              <div style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
-                
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 1: Electrostatics</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Electric Charge & Force</li>
-                    <li>Electric Fields & Gauss&apos;s Law (Interactive)</li>
-                  </ul>
-                </details>
-
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 2: Conductors & Capacitors</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Electrostatic Potential</li>
-                    <li>Dielectrics</li>
-                  </ul>
-                </details>
-
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 3: Electric Circuits</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Current & Resistance</li>
-                    <li>RC Differential Equations (Interactive)</li>
-                  </ul>
-                </details>
-
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 4: Magnetic Fields</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Magnetic Force</li>
-                    <li>Biot-Savart Builders (Interactive)</li>
-                  </ul>
-                </details>
-
-                <details>
-                  <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>Unit 5: Electromagnetism</summary>
-                  <ul style={{ paddingLeft: '1.5rem', fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--text-secondary)' }}>
-                    <li>Faraday & Lenz&apos;s Law (Interactive)</li>
-                    <li>Inductance</li>
-                  </ul>
-                </details>
-
-              </div>
-            </details>
+                </div>
+              </details>
+            ))}
 
           </div>
         </section>

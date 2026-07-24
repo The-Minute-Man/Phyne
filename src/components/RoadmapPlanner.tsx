@@ -4,7 +4,8 @@ import { useState, useTransition, useEffect, useRef } from 'react';
 import { updateRoadmapDates } from '@/app/auth/actions';
 import DatePicker from './DatePicker';
 
-type Unit = { course?: string; unitTitle: string; lessons: string[] };
+type Lesson = { title: string; isInteractive?: boolean } | string;
+type Unit = { course?: string; unitTitle: string; lessons: Lesson[]; isExamPrep?: boolean };
 
 function useScrollProgress(startOffset = 0.6, endOffset = 0.2) {
   const [progress, setProgress] = useState(0);
@@ -148,14 +149,25 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
           {expanded === i && (
             <div style={{ padding: '0 1.5rem 1.5rem 1.5rem' }}>
               <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {unit.lessons.map((lesson: string, lessonIdx: number) => (
-                  <div key={lessonIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem' }}>
-                    <span style={{ color: 'white', flex: 1, paddingRight: '1rem' }}>{lesson}</span>
-                    <span style={{ color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }}>
-                      {unit.lessonDates[lessonIdx] || 'TBD'}
-                    </span>
-                  </div>
-                ))}
+                {unit.lessons.map((lesson: Lesson, lessonIdx: number) => {
+                  const title = typeof lesson === 'string' ? lesson : lesson.title;
+                  const isInteractive = typeof lesson === 'string' ? title.includes('(Interactive)') : lesson.isInteractive;
+                  const displayTitle = typeof lesson === 'string' ? title.replace(' (Interactive)', '') : title;
+                  
+                  return (
+                    <div key={lessonIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem' }}>
+                      <span style={{ color: 'white', flex: 1, paddingRight: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {displayTitle}
+                        {isInteractive && (
+                          <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981', borderRadius: '4px', fontWeight: 600 }}>Interactive</span>
+                        )}
+                      </span>
+                      <span style={{ color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }}>
+                        {unit.lessonDates[lessonIdx] || 'TBD'}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -170,59 +182,84 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
 export default function RoadmapPlanner({
   courseTitle,
   units,
-  initialStart,
-  initialEnd
+  initialStart
 }: {
   courseTitle: string;
   units: Unit[];
   initialStart: string | null;
-  initialEnd: string | null;
 }) {
-  const getAcademicYearDates = () => {
-    const now = new Date();
-    // If we are in June (month 5) or later, default to the upcoming academic year
-    const year = now.getMonth() >= 5 ? now.getFullYear() : now.getFullYear() - 1;
-    return { start: `${year}-09-01`, end: `${year + 1}-05-10` };
-  };
-
-  const defaults = getAcademicYearDates();
-
-  // If the dates saved in the database are identical (e.g., today and today due to a previous bug), ignore them
-  const isInvalidDbDates = !initialStart || !initialEnd || initialStart === initialEnd;
-
-  const [startDate, setStartDate] = useState(isInvalidDbDates ? defaults.start : initialStart);
-  const [endDate, setEndDate] = useState(isInvalidDbDates ? defaults.end : initialEnd);
+  const [startDate, setStartDate] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [saveMessage, setSaveMessage] = useState('');
   const [expanded, setExpanded] = useState<number | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    const getAcademicYearStart = () => {
+      const now = new Date();
+      // If we are in June (month 5) or later, default to the upcoming academic year
+      const year = now.getMonth() >= 5 ? now.getFullYear() : now.getFullYear() - 1;
+      return `${year}-09-01`;
+    };
+    setStartDate(initialStart || getAcademicYearStart());
+  }, [initialStart]);
   
   // Calculate dates for individual lessons
   const calculateDates = () => {
-    let globalLessonIndex = 0;
-    const flatLessons = units.flatMap(u => u.lessons);
-    
-    if (!startDate || !endDate) return units.map(u => ({ ...u, lessonDates: u.lessons.map(() => null) }));
+    if (!startDate || !mounted) return units.map(u => ({ ...u, lessonDates: u.lessons.map(() => null) }));
     
     const parseLocal = (dateString: string) => {
       const [y, m, d] = dateString.split('-').map(Number);
-      return new Date(y, m - 1, d).getTime();
+      return new Date(y, m - 1, d);
     };
     
-    const start = parseLocal(startDate);
-    const end = parseLocal(endDate);
-    const diff = end - start;
-    if (diff <= 0) return units.map(u => ({ ...u, lessonDates: u.lessons.map(() => null) }));
-
-    const step = diff / (flatLessons.length - 1 || 1);
+    const startObj = parseLocal(startDate);
+    const startYear = startObj.getFullYear();
+    // Assuming if they start in Jan-May, the exam is this year, otherwise it's next year
+    const isSpringStart = startObj.getMonth() < 5;
+    const examYear = isSpringStart ? startYear : startYear + 1;
+    
+    // Regular curriculum ends March 31st
+    const regEndObj = parseLocal(`${examYear}-03-31`);
+    
+    // AP Prep spans April 1st to May 10th
+    const prepStartObj = parseLocal(`${examYear}-04-01`);
+    const prepEndObj = parseLocal(`${examYear}-05-10`);
+    
+    const regUnits = units.filter(u => !u.isExamPrep);
+    const prepUnits = units.filter(u => u.isExamPrep);
+    
+    const flatRegLessons = regUnits.flatMap(u => u.lessons);
+    const flatPrepLessons = prepUnits.flatMap(u => u.lessons);
+    
+    const regDiffDays = Math.round((regEndObj.getTime() - startObj.getTime()) / (1000 * 60 * 60 * 24));
+    const prepDiffDays = Math.round((prepEndObj.getTime() - prepStartObj.getTime()) / (1000 * 60 * 60 * 24));
+    
+    const regStepDays = regDiffDays > 0 ? regDiffDays / (flatRegLessons.length - 1 || 1) : 0;
+    const prepStepDays = prepDiffDays / (flatPrepLessons.length - 1 || 1);
+    
+    let regGlobalIndex = 0;
+    let prepGlobalIndex = 0;
     
     return units.map(unit => {
-      const lessonDates = unit.lessons.map(() => {
-        const lessonDate = new Date(start + step * globalLessonIndex);
-        globalLessonIndex++;
-        // Display as Short Date (e.g., Sep 1)
-        return lessonDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      });
-      return { ...unit, lessonDates };
+      if (unit.isExamPrep) {
+        const lessonDates = unit.lessons.map(() => {
+          const lessonDate = new Date(prepStartObj);
+          lessonDate.setDate(lessonDate.getDate() + Math.round(prepStepDays * prepGlobalIndex));
+          prepGlobalIndex++;
+          return lessonDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
+        return { ...unit, lessonDates };
+      } else {
+        const lessonDates = unit.lessons.map(() => {
+          const lessonDate = new Date(startObj);
+          lessonDate.setDate(lessonDate.getDate() + Math.round(regStepDays * regGlobalIndex));
+          regGlobalIndex++;
+          return lessonDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
+        return { ...unit, lessonDates };
+      }
     });
   };
 
@@ -230,7 +267,7 @@ export default function RoadmapPlanner({
 
   const handleSave = () => {
     startTransition(async () => {
-      const res = await updateRoadmapDates(startDate, endDate);
+      const res = await updateRoadmapDates(startDate);
       if (res.success) {
         setSaveMessage('Roadmap dates saved successfully!');
         setTimeout(() => setSaveMessage(''), 3000);
@@ -272,14 +309,9 @@ export default function RoadmapPlanner({
           value={startDate}
           onChange={setStartDate}
         />
-        <DatePicker 
-          label="Target End Date"
-          value={endDate}
-          onChange={setEndDate}
-        />
         <button 
           onClick={handleSave} 
-          disabled={isPending || !startDate || !endDate}
+          disabled={isPending || !startDate}
           className="btn-primary" 
           style={{ padding: '0.75rem 2rem', height: 'fit-content', backgroundColor: 'white', color: 'black' }}
         >

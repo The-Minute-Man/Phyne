@@ -30,7 +30,7 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body>
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
           {/* Navigation */}
