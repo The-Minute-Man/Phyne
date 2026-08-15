@@ -6,7 +6,7 @@ export interface Lesson {
 export interface Unit {
   course: 'Mechanics' | 'Electricity & Magnetism' | 'AP Skills' | 'AP Exam Prep';
   unitTitle: string;
-  lessons: Lesson[] | string[];
+  lessons: (Lesson | string)[];
   isExamPrep?: boolean;
 }
 
