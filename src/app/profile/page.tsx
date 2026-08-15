@@ -81,27 +81,52 @@ export default function ProfilePage() {
             <h2 className="text-display-sm" style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>
               Theme Settings
             </h2>
-            <div className="flex justify-between items-center" style={{ paddingBottom: '1rem' }}>
+            <div className="flex justify-between items-center flex-wrap gap-md" style={{ paddingBottom: '1rem' }}>
               <div>
                 <span style={{ display: 'block', fontWeight: 500, marginBottom: '0.25rem' }}>Appearance</span>
-                <span className="text-body-sm text-muted">Toggle between Light and Dark mode</span>
+                <span className="text-body-sm text-muted">Choose your preferred color theme</span>
               </div>
-              <button 
-                onClick={async () => {
+              <div className="flex gap-sm flex-wrap">
+                {[
+                  { name: 'dark', color: '#181818', border: '#3a3a3a' },
+                  { name: 'light', color: '#fafafa', border: '#e0e0e0' },
+                  { name: 'blue', color: '#0B1120', border: '#374151' },
+                  { name: 'green', color: '#064E3B', border: '#059669' },
+                  { name: 'purple', color: '#2E1065', border: '#5B21B6' },
+                  { name: 'red', color: '#450A0A', border: '#B91C1C' },
+                  { name: 'tan', color: '#FDF6E3', border: '#D3C6AA' }
+                ].map((themeOption) => {
                   const currentTheme = user.user_metadata?.theme || 'dark';
-                  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                  // Optimistically set the theme attribute on the document
-                  document.documentElement.setAttribute('data-theme', newTheme);
-                  // Import updateTheme at the top or use a server action
-                  const { updateTheme } = await import('../auth/actions');
-                  await updateTheme(newTheme);
-                  // Refresh to ensure server state matches
-                  window.location.reload();
-                }}
-                className="btn-secondary"
-              >
-                Switch to {(user.user_metadata?.theme || 'dark') === 'light' ? 'Dark' : 'Light'} Mode
-              </button>
+                  const isActive = currentTheme === themeOption.name;
+                  
+                  return (
+                    <button
+                      key={themeOption.name}
+                      onClick={async () => {
+                        if (isActive) return;
+                        document.documentElement.setAttribute('data-theme', themeOption.name);
+                        const { updateTheme } = await import('../auth/actions');
+                        await updateTheme(themeOption.name);
+                        window.location.reload();
+                      }}
+                      title={`Switch to ${themeOption.name} theme`}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        backgroundColor: themeOption.color,
+                        border: `2px solid ${isActive ? 'var(--accent)' : themeOption.border}`,
+                        cursor: 'pointer',
+                        padding: 0,
+                        transition: 'transform 0.2s ease, border-color 0.2s ease',
+                        transform: isActive ? 'scale(1.1)' : 'scale(1)',
+                        boxShadow: isActive ? '0 0 10px var(--accent-glow)' : 'none'
+                      }}
+                      aria-label={`${themeOption.name} theme`}
+                    />
+                  );
+                })}
+              </div>
             </div>
           </div>
         </ScrollReveal>
