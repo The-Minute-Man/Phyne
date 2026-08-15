@@ -161,3 +161,19 @@ export async function updateRoadmapDates(startDate: string) {
   revalidatePath('/', 'layout')
   return { success: true }
 }
+
+export async function updateTheme(theme: string) {
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      theme: theme
+    }
+  })
+
+  if (error) {
+    return { error: error.message, success: false }
+  }
+
+  revalidatePath('/', 'layout')
+  return { success: true }
+}

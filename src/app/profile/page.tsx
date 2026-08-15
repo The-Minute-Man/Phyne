@@ -75,6 +75,37 @@ export default function ProfilePage() {
           </div>
         </ScrollReveal>
 
+        {/* Theme Settings */}
+        <ScrollReveal delay={0.15}>
+          <div className="glass-panel">
+            <h2 className="text-display-sm" style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>
+              Theme Settings
+            </h2>
+            <div className="flex justify-between items-center" style={{ paddingBottom: '1rem' }}>
+              <div>
+                <span style={{ display: 'block', fontWeight: 500, marginBottom: '0.25rem' }}>Appearance</span>
+                <span className="text-body-sm text-muted">Toggle between Light and Dark mode</span>
+              </div>
+              <button 
+                onClick={async () => {
+                  const currentTheme = user.user_metadata?.theme || 'dark';
+                  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                  // Optimistically set the theme attribute on the document
+                  document.documentElement.setAttribute('data-theme', newTheme);
+                  // Import updateTheme at the top or use a server action
+                  const { updateTheme } = await import('../auth/actions');
+                  await updateTheme(newTheme);
+                  // Refresh to ensure server state matches
+                  window.location.reload();
+                }}
+                className="btn-secondary"
+              >
+                Switch to {(user.user_metadata?.theme || 'dark') === 'light' ? 'Dark' : 'Light'} Mode
+              </button>
+            </div>
+          </div>
+        </ScrollReveal>
+
         {/* Change Email */}
         <ScrollReveal delay={0.2}>
           <div className="glass-panel">

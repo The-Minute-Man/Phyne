@@ -2,8 +2,8 @@
 
 :root {
   /* Premium Dark Theme */
-  --bg-primary: #121212;
-  --bg-secondary: #1e1e1e;
+  --bg-primary: #181818;
+  --bg-secondary: #222222;
   --bg-tertiary: #2a2a2a;
   
   /* Off-White Accents */
@@ -11,12 +11,25 @@
   --text-secondary: #a0a0a0;
   --accent: #eaeaea;
   --accent-glow: rgba(234, 234, 234, 0.15);
-  --border: #333333;
+  --border: #3a3a3a;
   --border-hover: #555555;
   
   --radius: 12px;
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Outfit', sans-serif;
+}
+
+[data-theme="light"] {
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f0f0f0;
+  
+  --text-primary: #121212;
+  --text-secondary: #666666;
+  --accent: #333333;
+  --accent-glow: rgba(0, 0, 0, 0.1);
+  --border: #e0e0e0;
+  --border-hover: #cccccc;
 }
 
 html, body {

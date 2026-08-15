@@ -47,7 +47,9 @@ export default async function LearnerHome() {
                 </div>
               </div>
             </div>
-            <button className="btn-primary md-w-full" style={{ marginTop: '1.5rem', width: '100%' }}>Start Module</button>
+            <Link href="/learn/kinematics" className="btn-primary md-w-full" style={{ marginTop: '1.5rem', width: '100%', display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}>
+              Start Module
+            </Link>
           </section>
         </ScrollReveal>
 
@@ -72,18 +74,17 @@ export default async function LearnerHome() {
                     
                     {combinedUnits.filter(u => u.course === courseName).map((unit, i) => (
                       <details key={i}>
-                        <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)' }}>{unit.unitTitle}</summary>
+                        <summary style={{ cursor: 'pointer', outline: 'none', color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span>{unit.unitTitle}</span>
+                          <Link href={`/learn/${unit.slug}`} className="hover-lift text-muted" style={{ textDecoration: 'none', fontSize: '0.85rem' }}>Open</Link>
+                        </summary>
                         <ul className="text-body-sm text-muted" style={{ paddingLeft: '1.5rem', marginTop: '0.25rem' }}>
                           {unit.lessons.map((lesson, j) => {
                             const title = typeof lesson === 'string' ? lesson : lesson.title;
                             const displayTitle = typeof lesson === 'string' ? title.replace(' (Interactive)', '') : title;
-                            const isInteractive = typeof lesson === 'string' ? title.includes('(Interactive)') : lesson.isInteractive;
                             return (
                               <li key={j} style={{ marginBottom: '0.25rem' }}>
                                 {displayTitle}
-                                {isInteractive && (
-                                  <span style={{ marginLeft: '0.5rem', fontSize: '0.65rem', padding: '0.1rem 0.4rem', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981', borderRadius: '4px', fontWeight: 600 }}>Interactive</span>
-                                )}
                               </li>
                             );
                           })}

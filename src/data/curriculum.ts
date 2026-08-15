@@ -6,6 +6,7 @@ export interface Lesson {
 export interface Unit {
   course: 'Mechanics' | 'Electricity & Magnetism' | 'AP Skills' | 'AP Exam Prep';
   unitTitle: string;
+  slug: string;
   lessons: (Lesson | string)[];
   isExamPrep?: boolean;
 }
@@ -15,6 +16,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 1: Kinematics', 
+    slug: 'kinematics',
     lessons: [
       'Scalars and Vectors', 
       'Displacement, Velocity, and Acceleration', 
@@ -26,6 +28,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 2: Force and Translational Dynamics', 
+    slug: 'force-and-translational-dynamics',
     lessons: [
       'Systems and Center of Mass', 
       'Forces and Free-Body Diagrams', 
@@ -42,6 +45,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 3: Work, Energy, and Power', 
+    slug: 'work-energy-and-power',
     lessons: [
       'Translational Kinetic Energy', 
       'Work', 
@@ -53,6 +57,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 4: Linear Momentum', 
+    slug: 'linear-momentum',
     lessons: [
       'Linear Momentum', 
       'Change in Momentum and Impulse', 
@@ -63,6 +68,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 5: Torque and Rotational Dynamics', 
+    slug: 'torque-and-rotational-dynamics',
     lessons: [
       'Rotational Kinematics', 
       'Connecting Linear and Rotational Motion', 
@@ -75,6 +81,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 6: Energy and Momentum of Rotating Systems', 
+    slug: 'energy-and-momentum-of-rotating-systems',
     lessons: [
       'Rotational Kinetic Energy', 
       'Torque and Work', 
@@ -87,6 +94,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 7: Oscillations', 
+    slug: 'oscillations',
     lessons: [
       'Defining Simple Harmonic Motion (SHM)', 
       'Frequency and Period of SHM', 
@@ -100,6 +108,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 8: Electric Charges, Fields, and Gauss’s Law', 
+    slug: 'electric-charges-fields-and-gausss-law',
     lessons: [
       'Electric Charge and Electric Force', 
       'Conservation of Electric Charge and the Process of Charging', 
@@ -112,6 +121,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 9: Electric Potential', 
+    slug: 'electric-potential',
     lessons: [
       'Electric Potential Energy', 
       'Electric Potential', 
@@ -121,6 +131,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 10: Conductors and Capacitors', 
+    slug: 'conductors-and-capacitors',
     lessons: [
       'Electrostatics with Conductors', 
       'Redistribution of Charge between Conductors', 
@@ -131,6 +142,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 11: Electric Circuits', 
+    slug: 'electric-circuits',
     lessons: [
       'Electric Current', 
       'Simple Circuits', 
@@ -145,6 +157,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 12: Magnetic Fields and Electromagnetism', 
+    slug: 'magnetic-fields-and-electromagnetism',
     lessons: [
       'Magnetic Fields', 
       'Magnetism and Moving Charges', 
@@ -155,6 +168,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 13: Electromagnetic Induction', 
+    slug: 'electromagnetic-induction',
     lessons: [
       'Magnetic Flux', 
       'Electromagnetic Induction', 
@@ -169,6 +183,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'AP Skills', 
     unitTitle: 'Unit 14: Advanced AP Skills', 
+    slug: 'advanced-ap-skills',
     lessons: [
       'Data Linearization & Error Analysis', 
       'Setting up Differential Equations', 
@@ -179,6 +194,7 @@ export const combinedUnits: Unit[] = [
   { 
     course: 'AP Exam Prep', 
     unitTitle: 'AP Exam Preparation (April 1 - May 10)', 
+    slug: 'ap-exam-preparation',
     lessons: [
       '6 weeks of daily Mechanics & E&M FRQs, targeted topical MCQs, and full-length mock exams leading up to test day.'
     ], 
