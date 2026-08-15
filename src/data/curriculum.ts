@@ -16,154 +16,172 @@ export const combinedUnits: Unit[] = [
     course: 'Mechanics', 
     unitTitle: 'Unit 1: Kinematics', 
     lessons: [
-      { title: '1D & 2D Motion' }, 
-      { title: 'Vectors & Graphical Analysis' }, 
-      { title: 'Reference Frames & Relative Motion' }, 
-      { title: 'Projectile Motion' }
+      'Scalars and Vectors', 
+      'Displacement, Velocity, and Acceleration', 
+      'Representing Motion', 
+      'Reference Frames and Relative Motion', 
+      { title: 'Motion in Two or Three Dimensions (Interactive)', isInteractive: true }
     ] 
   },
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 2: Force and Translational Dynamics', 
     lessons: [
-      { title: 'Systems & Center of Mass' },
-      { title: 'Free Body Diagrams' }, 
-      { title: 'Friction & Circular Motion' }, 
-      { title: 'Spring Forces' },
-      { title: 'Interacting Systems' }, 
-      { title: 'Gravitational Force' },
-      { title: 'Drag Forces & Terminal Velocity', isInteractive: true }
+      'Systems and Center of Mass', 
+      'Forces and Free-Body Diagrams', 
+      "Newton's Third Law", 
+      "Newton's First Law", 
+      "Newton's Second Law", 
+      'Gravitational Force', 
+      'Kinetic and Static Friction', 
+      'Spring Forces', 
+      'Resistive Forces', 
+      { title: 'Circular Motion (Interactive)', isInteractive: true }
     ] 
   },
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 3: Work, Energy, and Power', 
     lessons: [
-      { title: 'Work-Energy Theorem' }, 
-      { title: 'Conservation of Energy' }, 
-      { title: 'Power & Potential Energy Functions' }, 
-      { title: 'Energy Landscapes', isInteractive: true }
+      'Translational Kinetic Energy', 
+      'Work', 
+      'Potential Energy', 
+      'Conservation of Energy', 
+      { title: 'Power (Interactive)', isInteractive: true }
     ] 
   },
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 4: Linear Momentum', 
     lessons: [
-      { title: 'Impulse & Momentum' }, 
-      { title: 'Conservation of Linear Momentum' },
-      { title: '1D & 2D Collisions' }
+      'Linear Momentum', 
+      'Change in Momentum and Impulse', 
+      'Conservation of Linear Momentum', 
+      'Elastic and Inelastic Collisions'
     ] 
   },
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 5: Torque and Rotational Dynamics', 
     lessons: [
-      { title: 'Rotational Kinematics' }, 
-      { title: 'Torque & Rotational Inertia' }, 
-      { title: "Newton's Second Law in Rotational Form" }
+      'Rotational Kinematics', 
+      'Connecting Linear and Rotational Motion', 
+      'Torque', 
+      'Rotational Inertia', 
+      "Rotational Equilibrium and Newton's First Law in Rotational Form", 
+      "Newton's Second Law in Rotational Form"
     ] 
   },
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 6: Energy and Momentum of Rotating Systems', 
     lessons: [
-      { title: 'Rotational Kinetic Energy' }, 
-      { title: 'Torque & Work' },
-      { title: 'Angular Momentum & Conservation' }, 
-      { title: 'Rolling Without Slipping' }, 
-      { title: 'Motion of Orbiting Satellites' }
+      'Rotational Kinetic Energy', 
+      'Torque and Work', 
+      'Angular Momentum and Angular Impulse', 
+      'Conservation of Angular Momentum', 
+      'Rolling', 
+      'Motion of Orbiting Satellites'
     ] 
   },
   { 
     course: 'Mechanics', 
     unitTitle: 'Unit 7: Oscillations', 
     lessons: [
-      { title: 'Simple Harmonic Motion' }, 
-      { title: 'Mass-Spring Systems' }, 
-      { title: 'Energy in SHM' }, 
-      { title: 'Physical Pendulums', isInteractive: true }
+      'Defining Simple Harmonic Motion (SHM)', 
+      'Frequency and Period of SHM', 
+      'Representing and Analyzing SHM', 
+      'Energy of Simple Harmonic Oscillators', 
+      { title: 'Simple and Physical Pendulums (Interactive)', isInteractive: true }
     ] 
   },
-  
+
   // E&M
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 8: Electric Charges, Fields, and Gauss’s Law', 
     lessons: [
-      { title: 'Electric Charge & Force' }, 
-      { title: 'Conservation of Charge' },
-      { title: 'Electric Fields' }, 
-      { title: 'Continuous Charge Distributions' },
-      { title: 'Electric Flux' },
-      { title: "Gauss's Law", isInteractive: true }
+      'Electric Charge and Electric Force', 
+      'Conservation of Electric Charge and the Process of Charging', 
+      'Electric Fields', 
+      'Electric Fields of Charge Distributions', 
+      'Electric Flux', 
+      { title: "Gauss's Law (Interactive)", isInteractive: true }
     ] 
   },
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 9: Electric Potential', 
     lessons: [
-      { title: 'Electric Potential Energy' }, 
-      { title: 'Electric Potential' }, 
-      { title: 'Conservation of Electric Energy' }
+      'Electric Potential Energy', 
+      'Electric Potential', 
+      'Conservation of Electric Energy'
     ] 
   },
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 10: Conductors and Capacitors', 
     lessons: [
-      { title: 'Electrostatics with Conductors' }, 
-      { title: 'Redistribution of Charge' },
-      { title: 'Capacitors' }, 
-      { title: 'Dielectrics' }
+      'Electrostatics with Conductors', 
+      'Redistribution of Charge between Conductors', 
+      'Capacitors', 
+      'Dielectrics'
     ] 
   },
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 11: Electric Circuits', 
     lessons: [
-      { title: 'Electric Current' }, 
-      { title: 'Resistance & Power' }, 
-      { title: "Kirchhoff's Laws" }, 
-      { title: 'RC Circuits' }
+      'Electric Current', 
+      'Simple Circuits', 
+      "Resistance, Resistivity, and Ohm's Law", 
+      'Electric Power', 
+      'Compound Direct Current Circuits', 
+      "Kirchhoff's Loop Rule", 
+      "Kirchhoff's Junction Rule", 
+      'Resistor-Capacitor (RC) Circuits'
     ] 
   },
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 12: Magnetic Fields and Electromagnetism', 
     lessons: [
-      { title: 'Magnetic Fields & Moving Charges' }, 
-      { title: "Biot-Savart Law" }, 
-      { title: "Ampère's Law" }
+      'Magnetic Fields', 
+      'Magnetism and Moving Charges', 
+      'Magnetic Fields of Current-Carrying Wires and the Biot-Savart Law', 
+      "Ampere's Law"
     ] 
   },
   { 
     course: 'Electricity & Magnetism', 
     unitTitle: 'Unit 13: Electromagnetic Induction', 
     lessons: [
-      { title: 'Magnetic Flux' }, 
-      { title: "Faraday & Lenz's Law", isInteractive: true }, 
-      { title: 'Induced Currents & Magnetic Forces' },
-      { title: 'Inductance & LR/LC Circuits' }
+      'Magnetic Flux', 
+      'Electromagnetic Induction', 
+      'Induced Currents and Magnetic Forces', 
+      'Inductance', 
+      'Circuits with Resistors and Inductors (LR Circuits)', 
+      { title: 'Circuits with Capacitors and Inductors (LC Circuits) (Interactive)', isInteractive: true }
     ] 
   },
 
-  // Additional AP Prep (Non-CED topics)
+  // Additional AP Prep
   { 
     course: 'AP Skills', 
     unitTitle: 'Unit 14: Advanced AP Skills', 
     lessons: [
-      { title: 'Data Linearization & Error Analysis' }, 
-      { title: 'Setting up Differential Equations' }, 
-      { title: 'Qualitative/Quantitative Translation' },
-      { title: 'Binomial Approximations' }
+      'Data Linearization & Error Analysis', 
+      'Setting up Differential Equations', 
+      'Qualitative/Quantitative Translation', 
+      'Binomial Approximations'
     ] 
   },
-
-  // AP Exam Preparation (April 1 - May 10)
-  { course: 'AP Exam Prep', unitTitle: 'Exam Prep: Week 1', isExamPrep: true, lessons: ['Days 1-3: Mechanics & E&M FRQs', 'Days 4-7: Topic 1-2 MCQs & Review'] },
-  { course: 'AP Exam Prep', unitTitle: 'Exam Prep: Week 2', isExamPrep: true, lessons: ['Days 8-10: Mechanics & E&M FRQs', 'Days 11-14: Topic 3-4 MCQs & Review'] },
-  { course: 'AP Exam Prep', unitTitle: 'Exam Prep: Week 3', isExamPrep: true, lessons: ['Days 15-17: Mechanics & E&M FRQs', 'Days 18-21: Topic 5-6 MCQs & Review'] },
-  { course: 'AP Exam Prep', unitTitle: 'Exam Prep: Week 4', isExamPrep: true, lessons: ['Days 22-24: Mechanics & E&M FRQs', 'Days 25-28: Topic 7 MCQs & Full Practice'] },
-  { course: 'AP Exam Prep', unitTitle: 'Exam Prep: Week 5', isExamPrep: true, lessons: ['Days 29-31: Full Mock Exam (Mechanics)', 'Days 32-35: Full Mock Exam (E&M)'] },
-  { course: 'AP Exam Prep', unitTitle: 'Exam Prep: Week 6', isExamPrep: true, lessons: ['Days 36-39: Final Review & Weak Areas', 'Day 40: Rest & Readiness'] },
+  { 
+    course: 'AP Exam Prep', 
+    unitTitle: 'AP Exam Preparation (April 1 - May 10)', 
+    lessons: [
+      '6 weeks of daily Mechanics & E&M FRQs, targeted topical MCQs, and full-length mock exams leading up to test day.'
+    ], 
+    isExamPrep: true 
+  }
 ];
