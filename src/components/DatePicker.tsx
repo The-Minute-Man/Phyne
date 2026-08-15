@@ -14,27 +14,21 @@ export default function DatePicker({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Parse YYYY-MM-DD properly into local values to avoid timezone shifts
   const parseValue = (val: string) => {
     if (!val) return new Date();
     const [y, m, d] = val.split('-').map(Number);
-    // Month is 0-indexed in JS Dates
     return new Date(y, m - 1, d);
   };
 
   const selectedDate = parseValue(value);
-  
   const [currentView, setCurrentView] = useState(selectedDate);
 
-  // Sync currentView if the external value changes
   useEffect(() => {
     setCurrentView(parseValue(value));
   }, [value]);
 
-  // Close popover when clicking outside
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      // e.composedPath() is more robust than contains() for nested SVGs and TextNodes
       const path = e.composedPath();
       if (containerRef.current && !path.includes(containerRef.current)) {
         setIsOpen(false);
@@ -63,7 +57,6 @@ export default function DatePicker({
   };
 
   const handleSelect = (day: number) => {
-    // Format as YYYY-MM-DD
     const newY = currentView.getFullYear();
     const newM = String(currentView.getMonth() + 1).padStart(2, '0');
     const newD = String(day).padStart(2, '0');
@@ -83,25 +76,14 @@ export default function DatePicker({
   ];
 
   return (
-    <div className="datepicker-container" ref={containerRef} style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      {label && <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{label}</label>}
+    <div className="flex flex-col gap-sm" ref={containerRef} style={{ position: 'relative' }}>
+      {label && <label className="input-label" style={{ marginBottom: 0 }}>{label}</label>}
       
       <button 
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          padding: '0.75rem 1rem',
-          borderRadius: '8px',
-          border: '1px solid var(--border)',
-          backgroundColor: 'rgba(255,255,255,0.05)',
-          color: 'white',
-          textAlign: 'left',
-          cursor: 'pointer',
-          minWidth: '200px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
+        className="input-field flex justify-between items-center"
+        style={{ cursor: 'pointer', textAlign: 'left', minWidth: '200px' }}
       >
         <span>{formatDisplay(value)}</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
@@ -113,22 +95,18 @@ export default function DatePicker({
       </button>
 
       {isOpen && (
-        <div style={{
+        <div className="glass-panel" style={{
           position: 'absolute',
-          bottom: '100%', // Open upwards to avoid falling off the bottom of the screen
+          bottom: '100%',
           left: 0,
           marginBottom: '0.5rem',
           width: '280px',
-          backgroundColor: '#121212',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '12px',
           padding: '1rem',
-          boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.8)',
           zIndex: 100,
           animation: 'fadeInSlideUp 0.2s ease forwards'
         }}>
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div className="flex justify-between items-center" style={{ marginBottom: '1rem' }}>
             <button type="button" onClick={handlePrevMonth} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '0.25rem' }}>
               &larr;
             </button>
@@ -163,8 +141,8 @@ export default function DatePicker({
                   style={{
                     padding: '0.4rem 0',
                     border: 'none',
-                    backgroundColor: isSelected ? 'white' : 'transparent',
-                    color: isSelected ? 'black' : 'white',
+                    backgroundColor: isSelected ? 'var(--text-primary)' : 'transparent',
+                    color: isSelected ? 'var(--bg-primary)' : 'var(--text-primary)',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     fontSize: '0.85rem',

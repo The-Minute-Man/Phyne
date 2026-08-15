@@ -18,38 +18,24 @@ export default function ForgotPasswordPage() {
   const [state, formAction] = useActionState(resetPasswordForEmail, null);
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      backgroundColor: 'var(--bg-primary)'
-    }}>
-      <div className="glass-panel" style={{ padding: '3rem', width: '100%', maxWidth: '400px', margin: '2rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginBottom: '0.5rem' }}>
+    <div className="flex items-center justify-center" style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
+      <div className="glass-panel" style={{ width: '100%', maxWidth: '400px', margin: '2rem' }}>
+        <div className="text-center" style={{ marginBottom: '2rem' }}>
+          <h1 className="text-display-sm" style={{ marginBottom: '0.5rem' }}>
             Forgot Password
           </h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Enter your email to receive a reset link.</p>
+          <p className="text-body-md text-muted">Enter your email to receive a reset link.</p>
         </div>
 
-        <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <form action={formAction} className="flex flex-col gap-lg">
           <div>
-            <label htmlFor="email" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Email</label>
+            <label htmlFor="email" className="input-label">Email</label>
             <input 
               id="email"
               name="email"
               type="email" 
               required
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                color: 'var(--text-primary)',
-                fontFamily: 'var(--font-sans)'
-              }}
+              className="input-field"
             />
           </div>
           
@@ -68,7 +54,7 @@ export default function ForgotPasswordPage() {
           <SubmitButton />
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        <div className="text-center" style={{ marginTop: '2rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
           Remember it? <Link href="/login" style={{ color: 'var(--text-primary)', textDecoration: 'underline' }}>Log in</Link>
         </div>
       </div>

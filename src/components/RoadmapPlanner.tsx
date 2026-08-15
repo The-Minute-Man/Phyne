@@ -278,12 +278,12 @@ export default function RoadmapPlanner({
   };
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <header className="fade-in" style={{ marginBottom: '3rem', textAlign: 'center' }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', marginBottom: '1rem', color: 'white' }}>
+    <div className="container section-padding">
+      <header className="fade-in text-center" style={{ marginBottom: '3rem' }}>
+        <h1 className="text-display-md text-primary" style={{ marginBottom: '1rem' }}>
           {courseTitle} Roadmap
         </h1>
-        <p style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-body-lg text-muted">
           Your personalized journey through AP Physics C.
         </p>
       </header>
@@ -303,7 +303,7 @@ export default function RoadmapPlanner({
       </div>
 
       {/* Settings Panel Moved to the Bottom */}
-      <div className="glass-panel fade-in settings-panel" style={{ position: 'relative', zIndex: 50, padding: '2rem', marginTop: '4rem', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-end', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.2)' }}>
+      <div className="glass-panel fade-in settings-panel flex items-end justify-center gap-lg" style={{ position: 'relative', zIndex: 50, marginTop: '4rem', flexWrap: 'wrap' }}>
         <DatePicker 
           label="Start Date"
           value={startDate}
@@ -313,7 +313,7 @@ export default function RoadmapPlanner({
           onClick={handleSave} 
           disabled={isPending || !startDate}
           className="btn-primary" 
-          style={{ padding: '0.75rem 2rem', height: 'fit-content', backgroundColor: 'white', color: 'black' }}
+          style={{ backgroundColor: 'white', color: 'black' }}
         >
           {isPending ? 'Saving...' : 'Generate & Save'}
         </button>
