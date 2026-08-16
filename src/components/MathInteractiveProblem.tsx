@@ -124,13 +124,13 @@ export default function MathInteractiveProblem({
         {prompt}
       </div>
 
-      <form onSubmit={handleSubmit} className="mb-4">
-        <div className="flex flex-col gap-2">
+      <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem' }}>
+        <div className="flex flex-col gap-3">
           <label htmlFor="math-input" className="text-sm font-medium text-text-secondary">
             Your Answer:
           </label>
-          <div className="flex gap-4 items-start">
-            <div className="flex-1">
+          <div className="flex" style={{ gap: '2rem', alignItems: 'flex-start', flexDirection: 'row' }}>
+            <div style={{ flex: 1 }}>
               <input
                 id="math-input"
                 type="text"
@@ -144,23 +144,24 @@ export default function MathInteractiveProblem({
                 className="input-field font-mono"
               />
               {status === 'error' && (
-                <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                <p className="text-body-sm mt-2 flex items-center gap-sm" style={{ color: '#ef4444' }}>
                   <AlertCircle size={14} />
                   {errorMessage}
                 </p>
               )}
               {status === 'incorrect' && (
-                <p className="text-yellow-500 text-sm mt-2 flex items-center gap-1">
+                <p className="text-body-sm mt-2 flex items-center gap-sm" style={{ color: '#eab308' }}>
                   <AlertCircle size={14} />
                   Not quite right. Check your algebra and try again.
                 </p>
               )}
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-md" style={{ minWidth: '140px' }}>
               <button
                 type="submit"
                 disabled={!userInput.trim() || status === 'correct' || status === 'gave_up'}
                 className="btn-primary"
+                style={{ width: '100%' }}
               >
                 Check
               </button>
@@ -169,7 +170,8 @@ export default function MathInteractiveProblem({
                 <button
                   type="button"
                   onClick={handleGiveUp}
-                  className="text-sm px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors border border-red-400/20"
+                  className="btn-secondary"
+                  style={{ color: '#ef4444', borderColor: '#ef4444', width: '100%' }}
                 >
                   Give Up
                 </button>
@@ -180,27 +182,36 @@ export default function MathInteractiveProblem({
       </form>
 
       {status !== 'correct' && status !== 'gave_up' && attempts >= 1 && hintContent && (
-        <div className="mb-4">
+        <div style={{ marginBottom: '1rem' }}>
           {!showHint ? (
             <button
               onClick={() => setShowHint(true)}
-              className="text-sm flex items-center gap-2 text-[var(--accent)] hover:opacity-80 transition-opacity"
+              className="btn-secondary btn-sm"
+              style={{ color: '#eab308', borderColor: '#eab308' }}
             >
-              <HelpCircle size={16} /> Show Hint
+              <HelpCircle size={16} style={{ marginRight: '0.5rem' }} /> Show Hint
             </button>
           ) : (
-            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-sm">
-              <div className="font-semibold text-yellow-500 mb-1 flex items-center gap-2">
+            <div style={{ 
+              backgroundColor: 'rgba(234, 179, 8, 0.1)', 
+              border: '1px solid rgba(234, 179, 8, 0.2)', 
+              borderRadius: '8px', 
+              padding: '1rem',
+              fontSize: '0.9rem' 
+            }}>
+              <div style={{ fontWeight: 600, color: '#eab308', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <HelpCircle size={16} /> Hint
               </div>
-              {hintContent}
+              <div style={{ color: 'var(--text-secondary)' }}>
+                {hintContent}
+              </div>
             </div>
           )}
         </div>
       )}
 
       {(status === 'correct' || status === 'gave_up') && (
-        <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ marginTop: '1.5rem' }}>
           <div className={`border rounded-lg p-4 mb-6 flex items-center justify-between gap-3 ${status === 'correct' ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
             <div className="flex items-center gap-3">
               {status === 'correct' ? (

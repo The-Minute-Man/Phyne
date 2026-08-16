@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
 @import 'mafs/core.css';
 @import 'mafs/font.css';
-@import 'katex/dist/katex.min.css';
 
 :root, [data-theme="dark"] {
   --bg-primary: #181818;
@@ -433,23 +432,7 @@ input:-webkit-autofill:active{
   .md-w-full {
     width: 100% !important;
   }
-}
 
-/* KaTeX Rendering Fixes */
-.katex-display {
-  padding: 1em 0; /* Add overall padding for display math */
-}
-.katex .vlist-t2 {
-  padding-bottom: 0.35em !important; /* Increase padding to prevent vector arrows and limits from overlapping */
-}
-.katex .accent {
-  margin-top: -0.2em; /* Adjust accent alignment to clear glyphs */
-  padding-bottom: 0.1em;
-}
-.katex .vec {
-  padding-top: 0.2em;
-  margin-bottom: 0.1em;
-}
 
 /* Problem Panel */
 .problem-panel {

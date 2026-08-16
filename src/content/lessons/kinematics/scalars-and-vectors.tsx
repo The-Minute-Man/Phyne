@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Mafs, Coordinates, Vector, Theme, useMovablePoint } from 'mafs';
-import { InlineMath, BlockMath } from 'react-katex';
+import { InlineMath, BlockMath } from '@/components/Math';
 import MathInteractiveProblem from '@/components/MathInteractiveProblem';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Line as ThreeLine, Sphere, Grid } from '@react-three/drei';
@@ -13,7 +13,7 @@ const Vector3DVisualization = ({ time }: { time: number }) => {
   const x = time;
   const y = 4 - Math.pow(time - 2, 2);
   const z = 2;
-  
+
   // Create path points from t=0 to current time
   const points: THREE.Vector3[] = [];
   for (let t = 0; t <= time; t += 0.1) {
@@ -26,27 +26,27 @@ const Vector3DVisualization = ({ time }: { time: number }) => {
       <OrbitControls />
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 10]} />
-      
+
       {/* Axes */}
       <Grid infiniteGrid fadeDistance={20} sectionColor="#444" cellColor="#222" />
       <axesHelper args={[5]} />
-      
+
       {/* Path Trace */}
       {points.length > 1 && (
         <ThreeLine points={points} color="orange" lineWidth={3} />
       )}
-      
+
       {/* Particle */}
       <Sphere position={[x, y, z]} args={[0.15, 16, 16]}>
         <meshStandardMaterial color="white" />
       </Sphere>
-      
+
       {/* Vectors to projections */}
       {/* x-y plane projection */}
-      <ThreeLine points={[new THREE.Vector3(0,0,0), new THREE.Vector3(x,y,0)]} color="red" dashed />
-      <ThreeLine points={[new THREE.Vector3(x,y,0), new THREE.Vector3(x,y,z)]} color="red" dashed />
+      <ThreeLine points={[new THREE.Vector3(0, 0, 0), new THREE.Vector3(x, y, 0)]} color="red" dashed />
+      <ThreeLine points={[new THREE.Vector3(x, y, 0), new THREE.Vector3(x, y, z)]} color="red" dashed />
       {/* position vector */}
-      <ThreeLine points={[new THREE.Vector3(0,0,0), new THREE.Vector3(x,y,z)]} color="cyan" lineWidth={2} />
+      <ThreeLine points={[new THREE.Vector3(0, 0, 0), new THREE.Vector3(x, y, z)]} color="cyan" lineWidth={2} />
     </>
   );
 };
@@ -97,7 +97,7 @@ export default function ScalarsAndVectors() {
         <p className="text-body-md" style={{ marginBottom: '1.5rem' }}>
           Drag the head of vector <InlineMath math="\vec{A}" /> below. Notice how the horizontal and vertical components react completely independently of one another.
         </p>
-        
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem', alignItems: 'start' }}>
           <div style={{ background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }}>
             <Mafs height={400}>
@@ -111,7 +111,7 @@ export default function ScalarsAndVectors() {
               {point.element}
             </Mafs>
           </div>
-          
+
           <div style={{
             padding: '1.5rem',
             borderRadius: '12px',
@@ -168,13 +168,13 @@ export default function ScalarsAndVectors() {
           <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', width: '80%', background: 'rgba(0,0,0,0.7)', padding: '1rem', borderRadius: '8px', backdropFilter: 'blur(5px)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ color: 'white' }}>Time <InlineMath math="t" />: {time.toFixed(1)}s</span>
-              <input 
-                type="range" 
-                min="0" 
-                max="4" 
-                step="0.1" 
-                value={time} 
-                onChange={(e) => setTime(parseFloat(e.target.value))} 
+              <input
+                type="range"
+                min="0"
+                max="4"
+                step="0.1"
+                value={time}
+                onChange={(e) => setTime(parseFloat(e.target.value))}
                 style={{ flex: 1, cursor: 'pointer' }}
               />
             </div>
@@ -190,7 +190,7 @@ export default function ScalarsAndVectors() {
         </p>
 
         {/* Problem 1 */}
-        <MathInteractiveProblem 
+        <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 1: Maximum Difference</h3>
@@ -201,39 +201,41 @@ export default function ScalarsAndVectors() {
           }
           correctExpression="a + b"
           variables={['a', 'b']}
+          hintContent="Hint: Subtraction is just adding the negative. How does reversing the direction of vector b affect the resultant?"
         >
-          <details style={{ marginTop: '1rem' }}>
-            <summary style={{ cursor: 'pointer', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Show Explanation</summary>
+          <div style={{ marginTop: '1rem' }} className="animate-in fade-in slide-in-from-top-2 duration-500">
+            <div style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Explanation</div>
             <div style={{ marginTop: '1rem', padding: '1rem', borderLeft: '2px solid var(--border)' }}>
               <p className="text-body-md">
-                Vector subtraction <InlineMath math="\vec{a} - \vec{b}" /> is equivalent to adding the flipped vector: <InlineMath math="\vec{a} + (-\vec{b})" />. 
-                The maximum magnitude of a vector sum occurs when the two vectors point in the <em>exact same direction</em>. 
-                For <InlineMath math="\vec{a}" /> and <InlineMath math="-\vec{b}" /> to point in the same direction, <InlineMath math="\vec{a}" /> and <InlineMath math="\vec{b}" /> must initially point in <strong>opposite directions</strong> (anti-parallel). 
+                Vector subtraction <InlineMath math="\vec{a} - \vec{b}" /> is equivalent to adding the flipped vector: <InlineMath math="\vec{a} + (-\vec{b})" />.
+                The maximum magnitude of a vector sum occurs when the two vectors point in the <em>exact same direction</em>.
+                For <InlineMath math="\vec{a}" /> and <InlineMath math="-\vec{b}" /> to point in the same direction, <InlineMath math="\vec{a}" /> and <InlineMath math="\vec{b}" /> must initially point in <strong>opposite directions</strong> (anti-parallel).
                 When anti-parallel, the magnitude of their difference is simply the sum of their individual magnitudes: <InlineMath math="a + b" />.
               </p>
             </div>
-          </details>
+          </div>
         </MathInteractiveProblem>
 
         {/* Problem 2 */}
-        <MathInteractiveProblem 
+        <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 2: City Grid Navigation (HRK Ex. 5)</h3>
               <p className="text-body-md">
                 A person desires to reach a destination that is a straight-line distance <InlineMath math="D" /> away, in a direction <InlineMath math="\theta" /> degrees North of East. However, she must travel along streets that go strictly North-South and East-West. What is the <strong>minimum distance</strong> she could travel to reach her destination? Enter your answer in terms of <InlineMath math="D" /> and <InlineMath math="\theta" />.
-                <br/><span className="text-muted text-sm">(Note: For math evaluation, assume <InlineMath math="\theta" /> is in radians so you can just type <code>D * cos(theta) ...</code>)</span>
+                <br /><span className="text-muted text-sm">(Note: For math evaluation, assume <InlineMath math="\theta" /> is in radians so you can just type <code>D * cos(theta) ...</code>)</span>
               </p>
             </>
           }
           correctExpression="D * cos(theta) + D * sin(theta)"
           variables={['D', 'theta']}
+          hintContent="Hint: The shortest path on a strictly orthogonal grid involves traveling the total required horizontal distance and the total required vertical distance."
         >
-          <details style={{ marginTop: '1rem' }}>
-            <summary style={{ cursor: 'pointer', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Show Explanation</summary>
+          <div style={{ marginTop: '1rem' }} className="animate-in fade-in slide-in-from-top-2 duration-500">
+            <div style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Explanation</div>
             <div style={{ marginTop: '1rem', padding: '1rem', borderLeft: '2px solid var(--border)' }}>
               <p className="text-body-md">
-                The shortest path on a strictly orthogonal (Manhattan) grid is to travel the total required horizontal distance (East) and the total required vertical distance (North). 
+                The shortest path on a strictly orthogonal (Manhattan) grid is to travel the total required horizontal distance (East) and the total required vertical distance (North).
                 No diagonal shortcuts are allowed!
               </p>
               <BlockMath math="\text{Distance East} = D \cos(\theta)" />
@@ -243,25 +245,26 @@ export default function ScalarsAndVectors() {
               </p>
               <BlockMath math="L = D\cos(\theta) + D\sin(\theta)" />
             </div>
-          </details>
+          </div>
         </MathInteractiveProblem>
 
         {/* Problem 3 */}
-        <MathInteractiveProblem 
+        <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 3: Finding the Resultant (HRK Ex. 2)</h3>
               <p className="text-body-md">
-                A person walks in the following pattern: <InlineMath math="3.1 \text{ km}" /> North, then <InlineMath math="2.4 \text{ km}" /> West, and finally <InlineMath math="5.2 \text{ km}" /> South. 
+                A person walks in the following pattern: <InlineMath math="3.1 \text{ km}" /> North, then <InlineMath math="2.4 \text{ km}" /> West, and finally <InlineMath math="5.2 \text{ km}" /> South.
                 What is the <strong>magnitude</strong> of the final displacement vector? Enter a number (or a formula evaluating to the number).
               </p>
             </>
           }
           correctExpression="sqrt((2.4)^2 + (5.2 - 3.1)^2)"
           variables={[]}
+          hintContent="Hint: Find the total distance traveled in the East-West direction and the North-South direction first, then apply the Pythagorean theorem."
         >
-          <details style={{ marginTop: '1rem' }}>
-            <summary style={{ cursor: 'pointer', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Show Explanation</summary>
+          <div style={{ marginTop: '1rem' }} className="animate-in fade-in slide-in-from-top-2 duration-500">
+            <div style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Explanation</div>
             <div style={{ marginTop: '1rem', padding: '1rem', borderLeft: '2px solid var(--border)' }}>
               <p className="text-body-md">
                 First, break the journey into Cartesian components (East is +x, North is +y):
@@ -280,25 +283,26 @@ export default function ScalarsAndVectors() {
               </p>
               <BlockMath math="|\vec{s}| = \sqrt{(-2.4)^2 + (-2.1)^2} = \sqrt{5.76 + 4.41} = \sqrt{10.17} \approx 3.189 \text{ km}" />
             </div>
-          </details>
+          </div>
         </MathInteractiveProblem>
 
         {/* Problem 4 */}
-        <MathInteractiveProblem 
+        <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 4: Symbolic Vector Magnitude</h3>
               <p className="text-body-md">
-                Let <InlineMath math="\vec{v}_1 = x\hat{i} + y\hat{j}" /> and <InlineMath math="\vec{v}_2 = -y\hat{i} + x\hat{j}" />. 
+                Let <InlineMath math="\vec{v}_1 = x\hat{i} + y\hat{j}" /> and <InlineMath math="\vec{v}_2 = -y\hat{i} + x\hat{j}" />.
                 Write the algebraic expression for the <strong>magnitude</strong> of their resultant sum <InlineMath math="\vec{v}_{sum} = \vec{v}_1 + \vec{v}_2" />. Enter your answer in terms of <InlineMath math="x" /> and <InlineMath math="y" />.
               </p>
             </>
           }
           correctExpression="sqrt((x-y)^2 + (y+x)^2)"
           variables={['x', 'y']}
+          hintContent="Hint: Group the terms with i-hat together and the terms with j-hat together before finding the magnitude."
         >
-          <details style={{ marginTop: '1rem' }}>
-            <summary style={{ cursor: 'pointer', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Show Explanation</summary>
+          <div style={{ marginTop: '1rem' }} className="animate-in fade-in slide-in-from-top-2 duration-500">
+            <div style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Explanation</div>
             <div style={{ marginTop: '1rem', padding: '1rem', borderLeft: '2px solid var(--border)' }}>
               <p className="text-body-md">
                 First, calculate the sum by adding the <InlineMath math="\hat{i}" /> components together and the <InlineMath math="\hat{j}" /> components together:
@@ -309,30 +313,31 @@ export default function ScalarsAndVectors() {
               </p>
               <BlockMath math="|\vec{v}_{sum}| = \sqrt{(x - y)^2 + (x + y)^2}" />
               <p className="text-body-md">
-                <em>Bonus Intuition:</em> If you expand the terms inside the square root, you get <InlineMath math="x^2 - 2xy + y^2 + x^2 + 2xy + y^2 = 2x^2 + 2y^2" />. 
+                <em>Bonus Intuition:</em> If you expand the terms inside the square root, you get <InlineMath math="x^2 - 2xy + y^2 + x^2 + 2xy + y^2 = 2x^2 + 2y^2" />.
                 This simplifies beautifully to <InlineMath math="\sqrt{2(x^2 + y^2)}" />. Notice that <InlineMath math="\vec{v}_1" /> and <InlineMath math="\vec{v}_2" /> are perpendicular vectors of identical magnitude <InlineMath math="\sqrt{x^2+y^2}" />. By geometric addition, their resultant forms the hypotenuse of an isosceles right triangle, which is always <InlineMath math="\sqrt{2}" /> times the leg length!
               </p>
             </div>
-          </details>
+          </div>
         </MathInteractiveProblem>
 
         {/* Problem 5 */}
-        <MathInteractiveProblem 
+        <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 5: Relative Vectors</h3>
               <p className="text-body-md">
-                Particle 1 is located at position vector <InlineMath math="\vec{r}_1 = x_1\hat{i} + y_1\hat{j}" />. 
-                Particle 2 is located at position vector <InlineMath math="\vec{r}_2 = x_2\hat{i} + y_2\hat{j}" />. 
+                Particle 1 is located at position vector <InlineMath math="\vec{r}_1 = x_1\hat{i} + y_1\hat{j}" />.
+                Particle 2 is located at position vector <InlineMath math="\vec{r}_2 = x_2\hat{i} + y_2\hat{j}" />.
                 What is the <strong>x-component</strong> of the vector that points <em>from</em> Particle 1 <em>to</em> Particle 2? Enter your answer in terms of <InlineMath math="x_1" /> and <InlineMath math="x_2" />.
               </p>
             </>
           }
           correctExpression="x_2 - x_1"
           variables={['x_1', 'x_2']}
+          hintContent="Hint: A relative vector pointing from A to B is always defined as the final position minus the initial position."
         >
-          <details style={{ marginTop: '1rem' }}>
-            <summary style={{ cursor: 'pointer', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Show Explanation</summary>
+          <div style={{ marginTop: '1rem' }} className="animate-in fade-in slide-in-from-top-2 duration-500">
+            <div style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Explanation</div>
             <div style={{ marginTop: '1rem', padding: '1rem', borderLeft: '2px solid var(--border)' }}>
               <p className="text-body-md">
                 A relative displacement vector pointing from point A to point B is defined as:
@@ -342,24 +347,25 @@ export default function ScalarsAndVectors() {
                 The x-component of this vector is simply the final x position minus the initial x position: <InlineMath math="x_2 - x_1" />.
               </p>
             </div>
-          </details>
+          </div>
         </MathInteractiveProblem>
         {/* Problem 6 */}
-        <MathInteractiveProblem 
+        <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 6: Magnitude from Components (HRK Ex. 4)</h3>
               <p className="text-body-md">
-                The x-component of a certain vector is <InlineMath math="-25" /> units and the y-component is <InlineMath math="+43" /> units. 
+                The x-component of a certain vector is <InlineMath math="-25" /> units and the y-component is <InlineMath math="+43" /> units.
                 What is the magnitude of the vector? Enter a number (or a mathematical expression that evaluates to the number).
               </p>
             </>
           }
           correctExpression="sqrt((-25)^2 + 43^2)"
           variables={[]}
+          hintContent="Hint: Even if a component is negative, its square will be positive. Use the Pythagorean theorem."
         >
-          <details style={{ marginTop: '1rem' }}>
-            <summary style={{ cursor: 'pointer', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Show Explanation</summary>
+          <div style={{ marginTop: '1rem' }} className="animate-in fade-in slide-in-from-top-2 duration-500">
+            <div style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Explanation</div>
             <div style={{ marginTop: '1rem', padding: '1rem', borderLeft: '2px solid var(--border)' }}>
               <p className="text-body-md">
                 The magnitude of any vector <InlineMath math="\vec{v} = v_x\hat{i} + v_y\hat{j}" /> is given by the Pythagorean theorem:
@@ -367,25 +373,26 @@ export default function ScalarsAndVectors() {
               <BlockMath math="v = \sqrt{v_x^2 + v_y^2}" />
               <BlockMath math="v = \sqrt{(-25)^2 + (43)^2} = \sqrt{625 + 1849} = \sqrt{2474} \approx 49.7" />
             </div>
-          </details>
+          </div>
         </MathInteractiveProblem>
 
         {/* Problem 7 */}
-        <MathInteractiveProblem 
+        <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 7: Scalar Multiplication</h3>
               <p className="text-body-md">
-                If a vector <InlineMath math="\vec{v} = x\hat{i} + y\hat{j}" /> is multiplied by a negative scalar constant <InlineMath math="-c" /> (where <InlineMath math="c > 0" />), what is the <strong>magnitude</strong> of the new vector? Enter your answer algebraically in terms of <InlineMath math="x" />, <InlineMath math="y" />, and <InlineMath math="c" />. 
-                <br/><span className="text-muted text-sm">(Note: Assume <InlineMath math="c" /> is positive. The magnitude must be positive!)</span>
+                If a vector <InlineMath math="\vec{v} = x\hat{i} + y\hat{j}" /> is multiplied by a negative scalar constant <InlineMath math="-c" /> (where <InlineMath math="c > 0" />), what is the <strong>magnitude</strong> of the new vector? Enter your answer algebraically in terms of <InlineMath math="x" />, <InlineMath math="y" />, and <InlineMath math="c" />.
+                <br /><span className="text-muted text-sm">(Note: Assume <InlineMath math="c" /> is positive. The magnitude must be positive!)</span>
               </p>
             </>
           }
           correctExpression="c * sqrt(x^2 + y^2)"
           variables={['x', 'y', 'c']}
+          hintContent="Hint: A scalar multiplies the magnitude directly, but it doesn't change the Pythagorean relationship of the components inside."
         >
-          <details style={{ marginTop: '1rem' }}>
-            <summary style={{ cursor: 'pointer', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Show Explanation</summary>
+          <div style={{ marginTop: '1rem' }} className="animate-in fade-in slide-in-from-top-2 duration-500">
+            <div style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', fontWeight: 600 }}>Explanation</div>
             <div style={{ marginTop: '1rem', padding: '1rem', borderLeft: '2px solid var(--border)' }}>
               <p className="text-body-md">
                 Multiplying the vector by <InlineMath math="-c" /> yields <InlineMath math="-cx\hat{i} - cy\hat{j}" />.
@@ -402,7 +409,7 @@ export default function ScalarsAndVectors() {
                 Notice that the negative sign disappears completely because magnitude measures <em>length</em>, which is always positive. The scalar <InlineMath math="c" /> simply scales the length of the vector by a factor of <InlineMath math="c" />.
               </p>
             </div>
-          </details>
+          </div>
         </MathInteractiveProblem>
 
       </section>
