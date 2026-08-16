@@ -67,10 +67,10 @@ export default async function LessonPage(
 
       {/* Removed lesson heading as requested */}
 
-      <ScrollReveal delay={0.2}>
-        {DynamicContent ? (
-          <DynamicContent />
-        ) : (
+      {DynamicContent ? (
+        <DynamicContent />
+      ) : (
+        <ScrollReveal delay={0.2}>
           <div style={{ minHeight: '500px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
             {isQuiz ? (
               <>
@@ -92,8 +92,8 @@ export default async function LessonPage(
               </>
             )}
           </div>
-        )}
-      </ScrollReveal>
+        </ScrollReveal>
+      )}
     </div>
   );
 }

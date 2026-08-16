@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { Mafs, Coordinates, Vector, Theme, useMovablePoint } from 'mafs';
 import { InlineMath, BlockMath } from '@/components/Math';
 import MathInteractiveProblem from '@/components/MathInteractiveProblem';
+import LessonNodeLayout from '@/components/LessonNodeLayout';
+import AnimatedText from '@/components/AnimatedText';
+import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Line as ThreeLine, Sphere, Grid } from '@react-three/drei';
 import * as THREE from 'three';
@@ -56,43 +59,60 @@ export default function ScalarsAndVectors() {
   const point = useMovablePoint([4, 3]);
   const drag_x = point.x;
   const drag_y = point.y;
-  const mag = Math.sqrt(drag_x * drag_x + drag_y * drag_y).toFixed(2);
-  const theta = (Math.atan2(drag_y, drag_x) * (180 / Math.PI)).toFixed(1);
+
+  const [mathPoint, setMathPoint] = React.useState([4, 3]);
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setMathPoint([drag_x, drag_y]);
+    }, 150);
+    return () => clearTimeout(handler);
+  }, [drag_x, drag_y]);
+
+  const math_x = mathPoint[0];
+  const math_y = mathPoint[1];
+
+  const mag = Math.sqrt(math_x * math_x + math_y * math_y).toFixed(2);
+  const theta = (Math.atan2(math_y, math_x) * (180 / Math.PI)).toFixed(1);
 
   // 3D Time State
   const [time, setTime] = useState(0);
 
-  return (
-    <div className="fade-in" style={{ paddingBottom: '4rem' }}>
-      <header style={{ marginBottom: '2rem' }}>
-        <h1 className="text-display-md">Lesson 1: Scalars and Vectors</h1>
-        <p className="text-body-lg text-secondary">Unit 1: Kinematics | AP Physics C: Mechanics</p>
-      </header>
-
-      {/* Teacher Talk Hook */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>1. The Intuition of Space</h2>
-        <div style={{
-          padding: '1.5rem',
-          borderRadius: 'var(--radius)',
-          background: 'var(--panel-bg)',
-          borderLeft: '4px solid var(--accent)',
-          backdropFilter: 'blur(10px)'
-        }}>
-          <p className="text-body-md" style={{ fontStyle: 'italic', marginBottom: '1rem' }}>
-            &quot;Imagine you&apos;re standing in the middle of a vast, featureless salt flat. I hand you a radio and tell you, &apos;Walk exactly 10 meters, then stop.&apos; What is the immediate problem?&quot;
-          </p>
-          <p className="text-body-md" style={{ marginBottom: '1rem' }}>
-            You know <em>how far</em> to walk, but you have absolutely no idea <em>which way</em> to go. A number by itself—a <strong>scalar</strong> like distance, mass, or temperature—is incomplete when describing movement. We need a new mathematical object that encodes both &apos;how much&apos; and &apos;which way&apos; simultaneously. We call this a <strong>vector</strong>.
-          </p>
-          <p className="text-body-md">
-            By overlaying a coordinate grid on space, we can break any complex, diagonal movement into entirely independent, fundamental steps (e.g., East and North). You have successfully decoupled the dimensions. This is the absolute superpower of vectors: <strong>breaking the complex into the simple.</strong>
-          </p>
+  const lessonNodes = [
+    {
+      id: 'intuition',
+      title: 'Intuition of Space',
+      content: (
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+          <section style={{ marginBottom: '3rem' }}>
+            <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>1. The Intuition of Space</h2>
+            <div>
+              <AnimatedText 
+                as="p" 
+                className="text-body-md" 
+                style={{ fontStyle: 'italic', marginBottom: '1rem' }}
+                text="&quot;Imagine you're standing in the middle of a vast, featureless salt flat. I hand you a radio and tell you, 'Walk exactly 10 meters, then stop.' What is the immediate problem?&quot;"
+              />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}>
+                <p className="text-body-md" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
+                  You know <em>how far</em> to walk, but you have absolutely no idea <em>which way</em> to go. A number by itself—a <strong>scalar</strong> like distance, mass, or temperature—is incomplete when describing movement. We need a new mathematical object that encodes both &apos;how much&apos; and &apos;which way&apos; simultaneously. We call this a <strong>vector</strong>.
+                </p>
+                <p className="text-body-md">
+                  By overlaying a coordinate grid on space, we can break any complex, diagonal movement into entirely independent, fundamental steps (e.g., East and North). You have successfully decoupled the dimensions. This is the absolute superpower of vectors: <strong>breaking the complex into the simple.</strong>
+                </p>
+              </motion.div>
+            </div>
+          </section>
         </div>
-      </section>
+      )
+    },
 
-      {/* 2D Vector Interactive */}
-      <section style={{ marginBottom: '3rem' }}>
+    {
+      id: 'deconstructor',
+      title: 'Vector Deconstructor',
+      content: (
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+          <section style={{ marginBottom: '3rem' }}>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>2. The Vector Deconstructor</h2>
         <p className="text-body-md" style={{ marginBottom: '1.5rem' }}>
           Drag the head of vector <InlineMath math="\vec{A}" /> below. Notice how the horizontal and vertical components react completely independently of one another.
@@ -122,23 +142,29 @@ export default function ScalarsAndVectors() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <span className="text-secondary text-body-sm">Vector Components</span>
-                <BlockMath math={`\\vec{A} = ${drag_x.toFixed(1)}\\hat{i} + ${drag_y.toFixed(1)}\\hat{j}`} />
+                <BlockMath math={`\\vec{A} = ${math_x.toFixed(1)}\\hat{i} + ${math_y.toFixed(1)}\\hat{j}`} />
               </div>
               <div>
                 <span className="text-secondary text-body-sm">Magnitude (Length)</span>
-                <BlockMath math={`|\\vec{A}| = \\sqrt{(${drag_x.toFixed(1)})^2 + (${drag_y.toFixed(1)})^2} = ${mag}`} />
+                <BlockMath math={`|\\vec{A}| = \\sqrt{(${math_x.toFixed(1)})^2 + (${math_y.toFixed(1)})^2} = ${mag}`} />
               </div>
               <div>
                 <span className="text-secondary text-body-sm">Direction (Angle)</span>
-                <BlockMath math={`\\theta = \\tan^{-1}\\left(\\frac{${drag_y.toFixed(1)}}{${drag_x.toFixed(1)}}\\right) = ${theta}^\\circ`} />
+                <BlockMath math={`\\theta = \\tan^{-1}\\left(\\frac{${math_y.toFixed(1)}}{${math_x.toFixed(1)}}\\right) = ${theta}^\\circ`} />
               </div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Calculus Groundwork */}
-      <section style={{ marginBottom: '3rem' }}>
+          </section>
+        </div>
+      )
+    },
+    {
+      id: 'calculus',
+      title: 'Calculus Bridge',
+      content: (
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+          <section style={{ marginBottom: '3rem' }}>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>3. The Calculus Bridge: Time-Dependent Vectors</h2>
         <p className="text-body-md" style={{ marginBottom: '1rem' }}>
           In standard physics, vectors are static. In AP Physics C, space is dynamic. If an object is moving, its position vector changes as a function of time, <InlineMath math="t" />:
@@ -153,10 +179,16 @@ export default function ScalarsAndVectors() {
             This proves mathematically that motion in the x, y, and z directions are entirely independent of one another.
           </p>
         </div>
-      </section>
-
-      {/* 3D Visualization */}
-      <section style={{ marginBottom: '3rem' }}>
+          </section>
+        </div>
+      )
+    },
+    {
+      id: '3dpath',
+      title: '3D Time-Evolving Path',
+      content: (
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+          <section style={{ marginBottom: '3rem' }}>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>4. 3D Time-Evolving Path</h2>
         <p className="text-body-md" style={{ marginBottom: '1.5rem' }}>
           Scrub the time slider to see a particle trace a 3D path. The cyan vector is the position vector <InlineMath math="\vec{r}(t)" />. Note how it is composed of its shadows (projections) on the axes.
@@ -180,17 +212,24 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Practice Problems */}
-      <section>
+          </section>
+        </div>
+      )
+    },
+    {
+      id: 'practice',
+      title: 'Master Practice',
+      content: (
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+          <section>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>5. HRK Master Practice</h2>
         <p className="text-body-md" style={{ marginBottom: '2rem' }}>
           The following problems are adapted from the rigorous pedagogical standards of <em>Resnick, Halliday, and Krane</em> (Chapter 2: Vectors). Enter your answers algebraically using the variables provided, or numerically if no variables are given. You can use standard math syntax like <code>*</code>, <code>+</code>, <code>/</code>, <code>^</code>, and <code>sqrt()</code>.
         </p>
 
         {/* Problem 1 */}
-        <MathInteractiveProblem
+        <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+          <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 1: Maximum Difference</h3>
@@ -215,9 +254,11 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </MathInteractiveProblem>
+        </div>
 
         {/* Problem 2 */}
-        <MathInteractiveProblem
+        <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+          <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 2: City Grid Navigation (HRK Ex. 5)</h3>
@@ -247,9 +288,11 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </MathInteractiveProblem>
+        </div>
 
         {/* Problem 3 */}
-        <MathInteractiveProblem
+        <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+          <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 3: Finding the Resultant (HRK Ex. 2)</h3>
@@ -285,9 +328,11 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </MathInteractiveProblem>
+        </div>
 
         {/* Problem 4 */}
-        <MathInteractiveProblem
+        <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+          <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 4: Symbolic Vector Magnitude</h3>
@@ -319,9 +364,11 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </MathInteractiveProblem>
+        </div>
 
         {/* Problem 5 */}
-        <MathInteractiveProblem
+        <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+          <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 5: Relative Vectors</h3>
@@ -349,8 +396,10 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </MathInteractiveProblem>
+        </div>
         {/* Problem 6 */}
-        <MathInteractiveProblem
+        <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+          <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 6: Magnitude from Components (HRK Ex. 4)</h3>
@@ -375,9 +424,11 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </MathInteractiveProblem>
+        </div>
 
         {/* Problem 7 */}
-        <MathInteractiveProblem
+        <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+          <MathInteractiveProblem
           prompt={
             <>
               <h3 className="text-body-lg" style={{ marginBottom: '0.5rem', color: 'var(--accent)' }}>Problem 7: Scalar Multiplication</h3>
@@ -411,9 +462,15 @@ export default function ScalarsAndVectors() {
             </div>
           </div>
         </MathInteractiveProblem>
+        </div>
 
-      </section>
+          </section>
+        </div>
+      )
+    }
+  ];
 
-    </div>
+  return (
+    <LessonNodeLayout nodes={lessonNodes} />
   );
 }
