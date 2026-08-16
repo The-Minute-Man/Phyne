@@ -48,7 +48,7 @@ export default async function LearnerUnitPage(
             </h2>
             <div className="flex flex-col gap-sm">
               {(() => {
-                const elements = [];
+                const elements: React.ReactNode[] = [];
                 const totalLessons = unit.lessons.length;
                 const quiz1Index = Math.floor(totalLessons / 3) - 1;
                 const quiz2Index = Math.floor((totalLessons * 2) / 3) - 1;

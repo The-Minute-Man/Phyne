@@ -22,7 +22,7 @@ export default function Navigation({ user, logoutAction }: NavigationProps) {
       borderBottom: '1px solid var(--border)',
       position: 'sticky',
       top: 0,
-      backgroundColor: 'rgba(18, 18, 18, 0.85)',
+      backgroundColor: 'var(--nav-bg)',
       backdropFilter: 'blur(12px)',
       zIndex: 100
     }}>
@@ -36,6 +36,7 @@ export default function Navigation({ user, logoutAction }: NavigationProps) {
               alt="Phyne Logo" 
               width={40} 
               height={40}
+              style={{ filter: 'var(--logo-filter)' }}
             />
             <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.5px', marginLeft: '0.5rem' }}>
               <span>PHY<span style={{ color: 'var(--text-secondary)' }}>NE</span></span>
