@@ -55,7 +55,7 @@ export default async function LearnerUnitPage(
                 
                 unit.lessons.forEach((lesson, index) => {
                   const title = typeof lesson === 'string' ? lesson : lesson.title;
-                  const displayTitle = typeof lesson === 'string' ? title.replace(' (Interactive)', '') : title;
+                  const displayTitle = title.replace(' (Interactive)', '');
                   const lessonSlug = displayTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                   
                   elements.push(

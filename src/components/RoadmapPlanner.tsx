@@ -195,6 +195,7 @@ export default function RoadmapPlanner({
   const [expanded, setExpanded] = useState<number | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const getAcademicYearStart = () => {
       const now = new Date();

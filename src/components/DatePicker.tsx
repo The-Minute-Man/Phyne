@@ -24,6 +24,7 @@ export default function DatePicker({
   const [currentView, setCurrentView] = useState(selectedDate);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentView(parseValue(value));
   }, [value]);
 

@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/client';
 import { useFormStatus } from 'react-dom';
 import type { User } from '@supabase/supabase-js';
 import ScrollReveal from '@/components/ScrollReveal';
+import { calculateOverallGrade, getLetterGrade } from '@/utils/grading';
 
 function EmailSubmit() {
   const { pending } = useFormStatus();
@@ -126,6 +127,62 @@ export default function ProfilePage() {
                     />
                   );
                 })}
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* Grading & Analytics */}
+        <ScrollReveal delay={0.17}>
+          <div className="glass-panel">
+            <h2 className="text-display-sm" style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>
+              Grading & Analytics
+            </h2>
+            <div className="flex flex-col gap-sm text-body-md">
+              <p className="text-muted" style={{ marginBottom: '1rem' }}>
+                Your overall grade is calculated using the following category weights.
+              </p>
+              
+              <div className="flex justify-between" style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
+                <span>Tests</span>
+                <span style={{ fontWeight: 600 }}>50%</span>
+              </div>
+              <div className="flex justify-between" style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
+                <span>Quizzes</span>
+                <span style={{ fontWeight: 600 }}>20%</span>
+              </div>
+              <div className="flex justify-between" style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
+                <span>Lesson Questions</span>
+                <span style={{ fontWeight: 600 }}>20%</span>
+              </div>
+              <div className="flex justify-between" style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
+                <span>Daily Questions</span>
+                <span style={{ fontWeight: 600 }}>10%</span>
+              </div>
+              
+              <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                <p className="text-body-sm text-muted">Current Performance</p>
+                <div className="flex justify-between items-center" style={{ marginTop: '0.5rem' }}>
+                  <span className="text-display-md" style={{ color: 'var(--accent)' }}>N/A</span>
+                  <span className="text-display-md" style={{ color: 'var(--accent)' }}>N/A</span>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                <h3 className="text-body-md" style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}>Grading Scale</h3>
+                <div className="grid grid-cols-2 gap-sm text-body-sm text-muted">
+                  <div>A: &ge; 92.50%</div>
+                  <div>C: 72.50% - 76.49%</div>
+                  <div>A-: 89.50% - 92.49%</div>
+                  <div>C-: 69.50% - 72.49%</div>
+                  <div>B+: 86.50% - 89.49%</div>
+                  <div>D+: 66.50% - 69.49%</div>
+                  <div>B: 82.50% - 86.49%</div>
+                  <div>D: 59.50% - 66.49%</div>
+                  <div>B-: 79.50% - 82.49%</div>
+                  <div>F: &lt; 59.50%</div>
+                  <div>C+: 76.50% - 79.49%</div>
+                </div>
               </div>
             </div>
           </div>

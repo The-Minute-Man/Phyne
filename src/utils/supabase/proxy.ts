@@ -31,7 +31,7 @@ export async function updateSession(request: NextRequest) {
   // from crashing the Next.js dev server if the refresh token is missing or invalid.
   try {
     await supabase.auth.getUser()
-  } catch (_err) {
+  } catch {
     // Silently ignore AuthApiError to prevent console spam
   }
 

@@ -8,6 +8,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -168,7 +169,7 @@ export default function Home() {
                     <div style={{ width: '40px', color: 'var(--text-secondary)', fontWeight: 600 }}>JAN</div>
                     <div>
                       <h4 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>Electrostatics</h4>
-                      <p className="text-body-sm text-muted">Gauss's Law Architect & charge density integral simulators.</p>
+                      <p className="text-body-sm text-muted">Gauss&apos;s Law Architect &amp; charge density integral simulators.</p>
                     </div>
                   </div>
                   <div className="flex gap-md">
@@ -182,7 +183,7 @@ export default function Home() {
                     <div style={{ width: '40px', color: 'var(--text-secondary)', fontWeight: 600 }}>MAR</div>
                     <div>
                       <h4 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>Electromagnetism</h4>
-                      <p className="text-body-sm text-muted">Faraday's / Lenz's Law induced current direction simulators.</p>
+                      <p className="text-body-sm text-muted">Faraday&apos;s / Lenz&apos;s Law induced current direction simulators.</p>
                     </div>
                   </div>
                 </div>
