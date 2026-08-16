@@ -56,7 +56,7 @@ export default function LessonNodeLayout({ nodes }: LessonNodeLayoutProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 100px)' }}>
       {/* Node Content Area */}
-      <div style={{ flex: 1, position: 'relative', overflowX: 'hidden', paddingBottom: '120px' }}>
+      <div style={{ flex: 1, position: 'relative', overflowX: 'hidden', paddingBottom: '100px' }}>
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentIndex}

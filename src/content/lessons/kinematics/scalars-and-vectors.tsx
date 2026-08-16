@@ -83,7 +83,7 @@ export default function ScalarsAndVectors() {
       id: 'intuition',
       title: 'Intuition of Space',
       content: (
-        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section style={{ marginBottom: '3rem' }}>
             <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>1. The Intuition of Space</h2>
             <div>
@@ -111,7 +111,7 @@ export default function ScalarsAndVectors() {
       id: 'deconstructor',
       title: 'Vector Deconstructor',
       content: (
-        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section style={{ marginBottom: '3rem' }}>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>2. The Vector Deconstructor</h2>
         <p className="text-body-md" style={{ marginBottom: '1.5rem' }}>
@@ -163,7 +163,7 @@ export default function ScalarsAndVectors() {
       id: 'calculus',
       title: 'Calculus Bridge',
       content: (
-        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section style={{ marginBottom: '3rem' }}>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>3. The Calculus Bridge: Time-Dependent Vectors</h2>
         <p className="text-body-md" style={{ marginBottom: '1rem' }}>
@@ -187,7 +187,7 @@ export default function ScalarsAndVectors() {
       id: '3dpath',
       title: '3D Time-Evolving Path',
       content: (
-        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section style={{ marginBottom: '3rem' }}>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>4. 3D Time-Evolving Path</h2>
         <p className="text-body-md" style={{ marginBottom: '1.5rem' }}>
@@ -220,7 +220,7 @@ export default function ScalarsAndVectors() {
       id: 'practice',
       title: 'Master Practice',
       content: (
-        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '10rem' }}>
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section>
         <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>5. HRK Master Practice</h2>
         <p className="text-body-md" style={{ marginBottom: '2rem' }}>

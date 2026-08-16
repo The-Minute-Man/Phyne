@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, ReactNode } from 'react';
-import { evaluate } from 'mathjs';
-import { AlertCircle, CheckCircle2, HelpCircle, XCircle } from 'lucide-react';
+import React, { useState, ReactNode, useEffect } from 'react';
+import { getPyodide, checkEquivalenceSympy } from '@/lib/pyodide';
+import { AlertCircle, CheckCircle2, HelpCircle, XCircle, Loader2 } from 'lucide-react';
 
 interface MathInteractiveProblemProps {
   /** The question prompt to display */
@@ -13,8 +13,7 @@ interface MathInteractiveProblemProps {
   variables?: string[];
   /** Optional content to reveal after the user gets it correct (like an accordion with the solution) */
   children?: ReactNode;
-  /** The number of random tests to perform to check algebraic equivalence */
-  testCount?: number;
+
   /** Optional hint content to show after 1 wrong attempt */
   hintContent?: ReactNode;
   /** Is this an extra credit "beast" question? */
@@ -28,13 +27,12 @@ export default function MathInteractiveProblem({
   correctExpression,
   variables = [],
   children,
-  testCount = 5,
   hintContent,
   isBeastQuestion = false,
   onComplete
 }: MathInteractiveProblemProps) {
   const [userInput, setUserInput] = useState('');
-  const [status, setStatus] = useState<'idle' | 'checking' | 'correct' | 'incorrect' | 'error' | 'gave_up'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading_pyodide' | 'checking' | 'correct' | 'incorrect' | 'error' | 'gave_up'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
@@ -49,66 +47,36 @@ export default function MathInteractiveProblem({
     return 1;
   };
 
-  const checkEquivalence = (userExpr: string, correctExpr: string, vars: string[]) => {
-    try {
-      // If there are no variables, just evaluate once
-      if (vars.length === 0) {
-        const val1 = evaluate(userExpr);
-        const val2 = evaluate(correctExpr);
-        if (Math.abs(val1 - val2) > 1e-6) return false;
-        return true;
-      }
+  useEffect(() => {
+    // Preload pyodide in the background
+    getPyodide().catch(console.error);
+  }, []);
 
-      // Check equivalence over multiple random values
-      for (let i = 0; i < testCount; i++) {
-        const scope: Record<string, number> = {};
-        vars.forEach(v => {
-          // Avoid 0 to prevent div by zero issues, stick to 1-10
-          scope[v] = Math.random() * 9 + 1;
-        });
-
-        const val1 = evaluate(userExpr, scope);
-        const val2 = evaluate(correctExpr, scope);
-
-        if (typeof val1 !== 'number' || typeof val2 !== 'number') {
-          throw new Error('Expression did not evaluate to a number.');
-        }
-
-        // Allow for floating point inaccuracies
-        if (Math.abs(val1 - val2) > 1e-6) {
-          return false;
-        }
-      }
-      return true;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrorMessage(err.message);
-      } else {
-        setErrorMessage('Invalid mathematical expression.');
-      }
-      return 'error';
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userInput.trim()) return;
 
     setStatus('checking');
     setErrorMessage('');
 
-    const isEquivalent = checkEquivalence(userInput, correctExpression, variables);
+    try {
+      const isEquivalent = await checkEquivalenceSympy(userInput, correctExpression);
 
-    if (isEquivalent === 'error') {
+      if (typeof isEquivalent === 'string') {
+        setStatus('error');
+        setErrorMessage(isEquivalent.replace('ERROR:', '').trim());
+      } else if (isEquivalent === true) {
+        setStatus('correct');
+        const pts = calculatePoints(attempts);
+        setPointsAwarded(pts);
+        if (onComplete) onComplete(pts);
+      } else {
+        setStatus('incorrect');
+        setAttempts(prev => prev + 1);
+      }
+    } catch (err) {
       setStatus('error');
-    } else if (isEquivalent) {
-      setStatus('correct');
-      const pts = calculatePoints(attempts);
-      setPointsAwarded(pts);
-      if (onComplete) onComplete(pts);
-    } else {
-      setStatus('incorrect');
-      setAttempts(prev => prev + 1);
+      setErrorMessage('Failed to initialize math engine. Please wait or refresh.');
     }
   };
 
@@ -159,11 +127,11 @@ export default function MathInteractiveProblem({
             <div className="flex flex-col gap-md" style={{ minWidth: '140px' }}>
               <button
                 type="submit"
-                disabled={!userInput.trim() || status === 'correct' || status === 'gave_up'}
+                disabled={!userInput.trim() || status === 'correct' || status === 'gave_up' || status === 'checking'}
                 className="btn-primary"
-                style={{ width: '100%' }}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
               >
-                Check
+                {status === 'checking' ? <><Loader2 size={16} className="animate-spin" /> Checking</> : 'Check'}
               </button>
               
               {status !== 'correct' && status !== 'gave_up' && attempts > 0 && (

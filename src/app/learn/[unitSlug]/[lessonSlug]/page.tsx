@@ -55,7 +55,7 @@ export default async function LessonPage(
   }
 
   return (
-    <div className="container section-padding">
+    <div className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
       <ScrollReveal>
         <div style={{ marginBottom: '2rem' }}>
           <Link href={`/learn/${unit.slug}`} className="text-muted flex items-center gap-sm hover-lift" style={{ display: 'inline-flex', textDecoration: 'none' }}>
