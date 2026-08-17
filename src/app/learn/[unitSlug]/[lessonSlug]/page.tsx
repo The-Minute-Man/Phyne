@@ -39,20 +39,9 @@ export default async function LessonPage(
     lessonTitle = typeof foundLesson === 'string' ? foundLesson.replace(' (Interactive)', '') : foundLesson.title.replace(' (Interactive)', '');
   }
 
-  // Check if a dynamic content file exists for this lesson
-  const contentFilePath = path.join(process.cwd(), 'src', 'content', 'lessons', params.unitSlug, `${params.lessonSlug}.tsx`);
-  const contentExists = fs.existsSync(contentFilePath);
-
-  let DynamicContent = null;
-  if (contentExists) {
-    try {
-      // Dynamic import matching Next.js bundling requirements
-      const mod = await import(`@/content/lessons/${params.unitSlug}/${params.lessonSlug}`);
-      DynamicContent = mod.default;
-    } catch (e) {
-      console.error('Failed to load dynamic content', e);
-    }
-  }
+  // Content files have been migrated to native Next.js routes.
+  // If a user hits this dynamic route, it means the lesson hasn't been built natively yet.
+  const DynamicContent = null;
 
   return (
     <div className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>

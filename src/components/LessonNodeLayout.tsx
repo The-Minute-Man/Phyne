@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useProgress } from './ProgressProvider';
 
 export interface LessonNode {
   id: string;
@@ -11,18 +12,23 @@ export interface LessonNode {
 
 interface LessonNodeLayoutProps {
   nodes: LessonNode[];
+  lessonId: string;
+  unitId: string;
 }
 
-export default function LessonNodeLayout({ nodes }: LessonNodeLayoutProps) {
+export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNodeLayoutProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [completedNodes, setCompletedNodes] = useState<Set<number>>(new Set([0]));
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
+  
+  const { progress, markNodeCompleted, markLessonCompleted } = useProgress();
+
+  const completedSet = new Set(progress?.node_progress?.[lessonId]?.completed || [0]);
 
   useEffect(() => {
-    // When visiting a node, mark it as completed immediately
-    setCompletedNodes((prev) => new Set(prev).add(currentIndex));
-  }, [currentIndex]);
+    // Optimistically mark as completed on visit
+    markNodeCompleted(lessonId, currentIndex);
+  }, [currentIndex, lessonId, markNodeCompleted]);
 
   const navigateTo = (index: number) => {
     if (index === currentIndex) return;
@@ -33,6 +39,9 @@ export default function LessonNodeLayout({ nodes }: LessonNodeLayoutProps) {
   const handleNext = () => {
     if (currentIndex < nodes.length - 1) {
       navigateTo(currentIndex + 1);
+    } else {
+      // Mark lesson completed
+      markLessonCompleted(lessonId, unitId);
     }
   };
 
@@ -105,7 +114,7 @@ export default function LessonNodeLayout({ nodes }: LessonNodeLayoutProps) {
           />
 
           {nodes.map((node, i) => {
-            const isCompleted = completedNodes.has(i);
+            const isCompleted = completedSet.has(i);
             const isActive = i === currentIndex;
             const isHovered = hoveredNode === i;
             const showTitle = isActive || isHovered;

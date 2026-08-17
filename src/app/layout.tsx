@@ -7,6 +7,7 @@ import { createClient } from '@/utils/supabase/server';
 import { logout } from '@/app/auth/actions';
 import Navigation from '@/components/Navigation';
 import { MathJaxContext } from 'better-react-mathjax';
+import { ProgressProvider } from '@/components/ProgressProvider';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,11 +47,13 @@ export default async function RootLayout({
       <body>
         <MathJaxContext config={mathJaxConfig}>
           <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <Navigation user={user} logoutAction={logout} />
+            <ProgressProvider>
+              <Navigation user={user} logoutAction={logout} />
 
-            <main style={{ flex: 1 }}>
-              {children}
-            </main>
+              <main style={{ flex: 1 }}>
+                {children}
+              </main>
+            </ProgressProvider>
           </div>
         </MathJaxContext>
       </body>

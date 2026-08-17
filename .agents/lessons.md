@@ -2,30 +2,49 @@
 
 This document outlines the standard operating procedures, architectural patterns, and grading rules for building interactive physics lessons in Phyne. Any new lesson added to the curriculum must adhere to these guidelines.
 
-## 1. Lesson Content & Pedagogy
+## 1. Lesson Creation Workflow (Scaffolding)
+
+To ensure structural consistency across the application, you must NEVER create a lesson entirely from scratch manually. Always use the built-in lesson scaffold script.
+
+From the project root, run:
+```bash
+npm run create-lesson <unitSlug> <lessonSlug> "Lesson Title"
+```
+**Example:** `npm run create-lesson kinematics 1d-motion "1D Motion: Velocity and Acceleration"`
+
+This script automatically:
+1. Generates the lesson's standard UI page (`src/app/learn/[unit]/[lesson]/page.tsx`).
+2. Generates the lesson's standard question bank file (`src/questions/[unit]/[lesson].tsx`).
+3. Wires up the new question bank to both the local unit `index.ts` and global `src/questions/index.ts`.
+
+## 2. Lesson Content & Pedagogy
 
 Every lesson must be a comprehensive learning module, not just a list of text. When building a lesson page (`src/app/learn/[unitSlug]/[lessonSlug]/page.tsx` or dynamic content files), it must contain:
 - **Explanations & Theory**: Clear, concise explanations of the physical phenomena and formulas.
 - **Interactables & Visualizations**: Use dynamic components, sliders, and interactive simulations to allow students to build an intuitive understanding of the physics.
 - **HRK Questions**: Lessons must include practice problems sourced directly from the **Halliday, Resnick, Krane (HRK)** textbook. You can find these reference materials in the `resources` folder in the project root. Ensure you adapt them to be interactive and use our components.
 
-## 2. Lesson Component Structure & UI
+## 3. Lesson Component Structure & UI
 
 When constructing the UI for a lesson:
-- **No Redundant Headers**: Do not include a hardcoded white `<h1>` or `<header>` at the top of the lesson questions page, as this was explicitly removed to keep the interface clean.
-- **Problem Isolation Panels**: All interactive math problems must be encapsulated within a `<div className="problem-panel">`. This provides a consistent glass-morphism aesthetic, subtle elevation, and an accent top-border.
-- **MathInteractiveProblem**: Always use the `MathInteractiveProblem.tsx` component for practice problems.
+- **Problem Isolation Panels**: Handled automatically by `QuestionRenderer.tsx`.
+- **QuestionRenderer**: Always use the `QuestionRenderer.tsx` component to render practice problems imported from the centralized question registry.
 
-## 3. Dynamic Question Pools & Parameterization
+## 4. Dynamic Question Pools & Parameterization
 
 Every lesson must be backed by a **large question pool**:
-- **Dynamic Parameterization**: Questions should dynamically randomize variable values and coefficients (e.g., using `Math.random()`) so that the underlying concept is tested with distinct numeric problems each time.
-- **Lesson Reset Mechanic**: Use the `useLessonState()` hook. When a lesson is restarted, it should increment the `attemptId` and clear error history, forcing React to remount the problem components and generate new random variables.
-- **Global Daily Questions**: A lesson should only select a subset of questions from its large pool for the user to solve during the lesson. The **leftover (unused)** questions from these pools are aggregated globally to fuel the **Daily Questions** feature on the dashboard (`/daily`). 
+- **Centralized Question Registry**: Do NOT hardcode problems in lesson files. Instead, define questions in the `src/questions/` directory using the `Question` interface (`src/types/questions.ts`).
+- **File Architecture**: Questions must be logically separated. Create a folder for the unit (e.g., `src/questions/kinematics/`), and place questions for a specific lesson in their own file (e.g., `scalars-and-vectors.tsx`).
+- **Global Indexing**: Every unit folder must have an `index.ts` file that exports all of its lesson questions, which are then aggregated into the master `allQuestions` array in `src/questions/index.ts`.
+- **Dynamic Parameterization**: Questions should dynamically randomize variable values and coefficients via the `generateParams` function in the `Question` object so that the underlying concept is tested with distinct numeric problems each time.
+- **Tagging & Routing**: Questions must be appropriately tagged:
+  - `lesson-dedicated`: Tags the question as "homework" strictly for use at the bottom of the corresponding lesson page.
+  - `daily-practice`: Tags the question for use in the adaptive Daily Questions (`/daily`) feature. Daily Questions draw 5 random questions across all covered lessons but explicitly exclude `lesson-dedicated` questions to prevent homework repetition.
+- **Progress Tracking Integration**: Rendering a question using `QuestionRenderer` automatically syncs the user's points to Supabase via the `ProgressProvider`. Do not manage lesson state or attempts manually. 
 
-## 4. Grading & Point Mechanics
+## 5. Grading & Point Mechanics
 
-The platform uses a strict attempt-based grading system for all interactive problems. `MathInteractiveProblem` already handles this logic natively, but you must be aware of the rules when designing the lesson state:
+The platform uses a strict attempt-based grading system for all interactive problems. `QuestionRenderer` handles this logic natively by wrapping `MathInteractiveProblem`, syncing directly to the global progress state.
 
 ### Standard Scoring
 - **1st Try**: 7 / 7 points
@@ -42,7 +61,7 @@ The platform uses a strict attempt-based grading system for all interactive prob
 - Beast questions are significantly harder and act as extra credit. 
 - They are **always worth exactly 7 points**, no matter how many attempts the student takes to get it right. 
 
-## 5. Platform-Wide Grading Weights
+## 6. Platform-Wide Grading Weights
 
 For context on how these points feed into the overall student grade, the centralized grading calculator (`src/utils/grading.ts`) weighs categories as follows:
 - **Tests**: 50%

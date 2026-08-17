@@ -45,6 +45,7 @@ export default function MathInteractiveProblem({
   const [attempts, setAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [pointsAwarded, setPointsAwarded] = useState<number | null>(null);
+  const [isMathliveLoaded, setIsMathliveLoaded] = useState(false);
   const mfRef = useRef<any>(null);
   const calculatePoints = (failedAttempts: number) => {
     if (isBeastQuestion) return 7; // Always 7 points for beast questions
@@ -61,14 +62,14 @@ export default function MathInteractiveProblem({
   }, []);
 
   useEffect(() => {
-    // Provide fonts from CDN to prevent Next.js bundling errors
-    if (typeof window !== 'undefined') {
-      (window as any).mathlive = {
-        fontsDirectory: 'https://unpkg.com/mathlive@0.110.0/dist/fonts'
-      };
-    }
     // Dynamically import mathlive so it doesn't break SSR
-    import('mathlive').catch(console.error);
+    import('mathlive').then((mathlive) => {
+      if (mathlive.MathfieldElement) {
+        mathlive.MathfieldElement.fontsDirectory = 'https://cdn.jsdelivr.net/npm/mathlive@0.110.0/fonts';
+        mathlive.MathfieldElement.soundsDirectory = 'https://cdn.jsdelivr.net/npm/mathlive@0.110.0/sounds';
+      }
+      setIsMathliveLoaded(true);
+    }).catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -168,25 +169,32 @@ export default function MathInteractiveProblem({
             Your Answer:
           </label>
           <div className="flex" style={{ gap: '2rem', alignItems: 'flex-start', flexDirection: 'row' }}>
-            <div style={{ flex: 1 }}>
-              <math-field
-                ref={mfRef}
-                style={{ 
-                  width: '100%', 
-                  fontSize: '1.2rem', 
-                  minHeight: '38px',
-                  padding: '4px 8px',
-                  borderRadius: 'var(--radius)', 
-                  border: '1px solid var(--border)', 
-                  backgroundColor: 'rgba(255,255,255,0.03)', 
-                  color: 'inherit',
-                  outline: 'none',
-                  '--caret-color': 'white',
-                  '--selection-background-color': 'rgba(255, 255, 255, 0.2)',
-                  '--contains-highlight-background-color': 'transparent'
-                } as React.CSSProperties}
-                disabled={status === 'correct' || status === 'gave_up' ? true : undefined}
-              />
+            <div style={{ flex: 1, minHeight: '48px' }}>
+              {isMathliveLoaded ? (
+                <math-field
+                  ref={mfRef}
+                  style={{ 
+                    width: '100%', 
+                    fontSize: '1.2rem', 
+                    minHeight: '38px',
+                    padding: '4px 8px',
+                    borderRadius: 'var(--radius)', 
+                    border: '1px solid var(--border)', 
+                    backgroundColor: 'rgba(255,255,255,0.03)', 
+                    color: 'inherit',
+                    outline: 'none',
+                    '--caret-color': 'white',
+                    '--selection-background-color': 'rgba(255, 255, 255, 0.2)',
+                    '--contains-highlight-background-color': 'transparent'
+                  } as React.CSSProperties}
+                  disabled={status === 'correct' || status === 'gave_up' ? true : undefined}
+                />
+              ) : (
+                <div style={{ width: '100%', minHeight: '38px', padding: '4px 8px', border: '1px solid var(--border)', borderRadius: 'var(--radius)', backgroundColor: 'rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center' }}>
+                  <Loader2 size={16} className="animate-spin text-muted" style={{ marginRight: '8px' }} />
+                  <span className="text-muted text-sm">Loading math editor...</span>
+                </div>
+              )}
               {status === 'error' && (
                 <p className="text-body-sm mt-2 flex items-center gap-sm" style={{ color: '#ef4444' }}>
                   <AlertCircle size={14} />

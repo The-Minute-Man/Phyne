@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useTransition, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { updateRoadmapDates } from '@/app/auth/actions';
 import DatePicker from './DatePicker';
+import { useProgress } from './ProgressProvider';
 
-type Lesson = { title: string; isInteractive?: boolean } | string;
-type Unit = { course?: string; unitTitle: string; lessons: Lesson[]; isExamPrep?: boolean };
+type Lesson = { title: string; isInteractive?: boolean; id?: string } | string;
+type Unit = { course?: string; unitTitle: string; id?: string; slug?: string; lessons: Lesson[]; isExamPrep?: boolean };
 
 function useScrollProgress(startOffset = 0.6, endOffset = 0.2) {
   const [progress, setProgress] = useState(0);
@@ -58,6 +60,10 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
   const pLine = mapProgress(effectiveProgress, 0.1, 0.7);
   const pPanel = mapProgress(effectiveProgress, 0.0, 0.4);
 
+  const { progress: userProgress } = useProgress();
+  const unitId = unit.slug || unit.id || unit.unitTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const isUnitCompleted = userProgress?.completed_units?.includes(unitId);
+
   return (
     <div className="timeline-node" ref={ref} style={{ 
       position: 'relative', 
@@ -97,10 +103,11 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
         transform: `translate(-50%, -50%) scale(${pDot})`,
         width: '16px',
         height: '16px',
-        backgroundColor: 'white',
+        backgroundColor: isUnitCompleted ? '#10b981' : 'white', // Green if completed
         borderRadius: '50%',
         zIndex: 2,
         opacity: pDot,
+        boxShadow: isUnitCompleted ? '0 0 10px #10b981' : 'none',
         willChange: 'transform, opacity'
       }} />
 
@@ -133,8 +140,8 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
             style={{ padding: '1.5rem', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.2rem', margin: 0, color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                {unit.unitTitle}
+              <h3 style={{ fontSize: '1.2rem', margin: 0, color: isUnitCompleted ? '#10b981' : 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                {unit.unitTitle} {isUnitCompleted && '✓'}
               </h3>
               <span style={{ color: 'white', fontSize: '1.5rem', lineHeight: '1rem' }}>
                 {expanded === i ? '−' : '+'}
@@ -153,19 +160,23 @@ function TimelineNode({ unit, i, isLast, expanded, setExpanded }: { unit: Unit &
                   const title = typeof lesson === 'string' ? lesson : lesson.title;
                   const isInteractive = typeof lesson === 'string' ? title.includes('(Interactive)') : lesson.isInteractive;
                   const displayTitle = typeof lesson === 'string' ? title.replace(' (Interactive)', '') : title;
+                  const lessonId = typeof lesson !== 'string' && lesson.id ? lesson.id : displayTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                  const isLessonCompleted = userProgress?.completed_lessons?.includes(lessonId);
                   
                   return (
-                    <div key={lessonIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem' }}>
-                      <span style={{ color: 'white', flex: 1, paddingRight: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {displayTitle}
-                        {isInteractive && (
-                          <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981', borderRadius: '4px', fontWeight: 600 }}>Interactive</span>
-                        )}
-                      </span>
-                      <span style={{ color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }}>
-                        {unit.lessonDates[lessonIdx] || 'TBD'}
-                      </span>
-                    </div>
+                    <Link key={lessonIdx} href={`/learn/${unitId}/${lessonId}`} style={{ textDecoration: 'none' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', padding: '0.25rem 0', cursor: 'pointer' }}>
+                        <span style={{ color: isLessonCompleted ? '#10b981' : 'white', flex: 1, paddingRight: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'color 0.2s' }} className="hover:text-accent">
+                          {displayTitle} {isLessonCompleted && '✓'}
+                          {isInteractive && (
+                            <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981', borderRadius: '4px', fontWeight: 600 }}>Interactive</span>
+                          )}
+                        </span>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }}>
+                          {unit.lessonDates[lessonIdx] || 'TBD'}
+                        </span>
+                      </div>
+                    </Link>
                   );
                 })}
               </div>
