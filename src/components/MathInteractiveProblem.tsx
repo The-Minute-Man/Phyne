@@ -12,6 +12,14 @@ declare global {
   }
 }
 
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'math-field': any;
+    }
+  }
+}
+
 interface MathInteractiveProblemProps {
   /** The question prompt to display */
   prompt: ReactNode;

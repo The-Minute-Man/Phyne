@@ -1,15 +1,16 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 interface AnimatedTextProps {
   text: string;
   className?: string;
   delay?: number;
   as?: React.ElementType;
+  style?: React.CSSProperties;
 }
 
-export default function AnimatedText({ text, className = "", delay = 0, as: Component = "p" }: AnimatedTextProps) {
+export default function AnimatedText({ text, className = "", delay = 0, as: Component = "p", style }: AnimatedTextProps) {
   // Split text into words
   const words = text.split(" ");
 
@@ -21,7 +22,7 @@ export default function AnimatedText({ text, className = "", delay = 0, as: Comp
     }),
   };
 
-  const child = {
+  const child: Variants = {
     visible: {
       opacity: 1,
       y: 0,
@@ -44,7 +45,7 @@ export default function AnimatedText({ text, className = "", delay = 0, as: Comp
 
   return (
     <motion.p
-      style={{ overflow: "hidden", display: "flex", flexWrap: "wrap", gap: "0.25rem" }}
+      style={{ overflow: "hidden", display: "flex", flexWrap: "wrap", gap: "0.25rem", ...style }}
       variants={container}
       initial="hidden"
       animate="visible"
