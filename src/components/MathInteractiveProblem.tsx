@@ -28,6 +28,12 @@ interface MathInteractiveProblemProps {
   isBeastQuestion?: boolean;
   /** Callback fired when the problem is completed (correct or gave up) */
   onComplete?: (points: number) => void;
+
+  initialUserInput?: string;
+  initialAttempts?: number;
+  initialStatus?: 'idle' | 'loading_pyodide' | 'checking' | 'correct' | 'incorrect' | 'error' | 'gave_up';
+  initialPointsAwarded?: number | null;
+  onStateChange?: (state: { userInput: string; attempts: number; status: 'idle' | 'loading_pyodide' | 'checking' | 'correct' | 'incorrect' | 'error' | 'gave_up'; pointsAwarded: number }) => void;
 }
 
 export default function MathInteractiveProblem({
@@ -37,14 +43,19 @@ export default function MathInteractiveProblem({
   children,
   hintContent,
   isBeastQuestion = false,
-  onComplete
+  onComplete,
+  initialUserInput = '',
+  initialAttempts = 0,
+  initialStatus = 'idle',
+  initialPointsAwarded = null,
+  onStateChange
 }: MathInteractiveProblemProps) {
-  const [userInput, setUserInput] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading_pyodide' | 'checking' | 'correct' | 'incorrect' | 'error' | 'gave_up'>('idle');
+  const [userInput, setUserInput] = useState(initialUserInput);
+  const [status, setStatus] = useState<'idle' | 'loading_pyodide' | 'checking' | 'correct' | 'incorrect' | 'error' | 'gave_up'>(initialStatus);
   const [errorMessage, setErrorMessage] = useState('');
-  const [attempts, setAttempts] = useState(0);
+  const [attempts, setAttempts] = useState(initialAttempts);
   const [showHint, setShowHint] = useState(false);
-  const [pointsAwarded, setPointsAwarded] = useState<number | null>(null);
+  const [pointsAwarded, setPointsAwarded] = useState<number | null>(initialPointsAwarded);
   const [isMathliveLoaded, setIsMathliveLoaded] = useState(false);
   const mfRef = useRef<any>(null);
   const calculatePoints = (failedAttempts: number) => {
@@ -72,6 +83,47 @@ export default function MathInteractiveProblem({
     }).catch(console.error);
   }, []);
 
+  // Update transient state from parent if it loads asynchronously
+  useEffect(() => {
+    if (initialAttempts !== undefined) setAttempts(initialAttempts);
+    if (initialStatus) setStatus(initialStatus);
+    if (initialPointsAwarded !== null) setPointsAwarded(initialPointsAwarded);
+  }, [initialAttempts, initialStatus, initialPointsAwarded]);
+
+  // Synchronize math-field value when mathlive loads or state shifts from parent
+  useEffect(() => {
+    const mf = mfRef.current;
+    if (mf && isMathliveLoaded) {
+      const currentVal = mf.getValue('ascii-math');
+      const targetVal = initialUserInput || '';
+      if (currentVal !== targetVal) {
+        mf.setValue(targetVal, { format: 'ascii-math' });
+        setUserInput(targetVal);
+      }
+    }
+  }, [isMathliveLoaded, initialUserInput]);
+
+  // Track state changes and report back to parent (autosave/debounce)
+  const lastStateRef = useRef<string>('');
+  useEffect(() => {
+    if (!onStateChange) return;
+
+    const stateStr = JSON.stringify({ userInput, attempts, status, pointsAwarded });
+    if (lastStateRef.current === stateStr) return;
+    lastStateRef.current = stateStr;
+
+    const timeoutId = setTimeout(() => {
+      onStateChange({
+        userInput,
+        attempts,
+        status,
+        pointsAwarded: pointsAwarded || 0
+      });
+    }, status === 'correct' || status === 'gave_up' ? 0 : 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [userInput, attempts, status, pointsAwarded, onStateChange]);
+
   useEffect(() => {
     const mf = mfRef.current;
     if (!mf) return;
@@ -93,7 +145,7 @@ export default function MathInteractiveProblem({
       mf.removeEventListener('input', handleInput);
       mf.removeEventListener('focusout', handleFocusOut);
     };
-  }, [mfRef, status]);
+  }, [mfRef, isMathliveLoaded, status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

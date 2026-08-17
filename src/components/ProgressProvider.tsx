@@ -11,6 +11,7 @@ export interface ProgressState {
   daily_streak: number;
   best_streak: number;
   last_daily_completed: string | null;
+  question_states: Record<string, { userInput: string; attempts: number; status: string; pointsAwarded: number }>;
 }
 
 interface ProgressContextType {
@@ -21,6 +22,7 @@ interface ProgressContextType {
   markLessonCompleted: (lessonId: string, unitId: string) => Promise<void>;
   answerQuestion: (questionId: string, points: number, category: 'lessons' | 'daily') => Promise<void>;
   completeDailySet: () => Promise<void>;
+  saveQuestionState: (questionId: string, state: { userInput: string; attempts: number; status: string; pointsAwarded: number }) => Promise<void>;
 }
 
 const defaultState: ProgressState = {
@@ -31,7 +33,8 @@ const defaultState: ProgressState = {
   grades: { tests: 0, quizzes: 0, lessons: 0, daily: 0 },
   daily_streak: 0,
   best_streak: 0,
-  last_daily_completed: null
+  last_daily_completed: null,
+  question_states: {}
 };
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
@@ -113,6 +116,16 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     await handleProgressUpdate('complete_daily_set', {});
   }, [handleProgressUpdate]);
 
+  const saveQuestionState = useCallback(async (questionId: string, state: { userInput: string; attempts: number; status: string; pointsAwarded: number }) => {
+    // Optimistic update
+    setProgress(prev => {
+      if (!prev) return prev;
+      const qStates = { ...prev.question_states, [questionId]: state };
+      return { ...prev, question_states: qStates };
+    });
+    await handleProgressUpdate('save_question_state', { questionId, state });
+  }, [handleProgressUpdate]);
+
   return (
     <ProgressContext.Provider value={{ 
       progress, 
@@ -121,7 +134,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       markNodeCompleted,
       markLessonCompleted,
       answerQuestion,
-      completeDailySet
+      completeDailySet,
+      saveQuestionState
     }}>
       {children}
     </ProgressContext.Provider>

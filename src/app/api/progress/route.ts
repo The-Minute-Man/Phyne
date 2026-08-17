@@ -31,7 +31,8 @@ export async function GET() {
       grades: { tests: 0, quizzes: 0, lessons: 0, daily: 0 },
       daily_streak: 0,
       best_streak: 0,
-      last_daily_completed: null
+      last_daily_completed: null,
+      question_states: {}
     });
   }
 
@@ -70,7 +71,8 @@ export async function POST(req: Request) {
           grades: { tests: 0, quizzes: 0, lessons: 0, daily: 0 },
           daily_streak: 0,
           best_streak: 0,
-          last_daily_completed: null
+          last_daily_completed: null,
+          question_states: {}
         })
         .select()
         .single();
@@ -131,6 +133,12 @@ export async function POST(req: Request) {
           updates.best_streak = updates.daily_streak;
         }
       }
+    }
+    else if (action === 'save_question_state') {
+      const { questionId, state } = body;
+      const qStates = { ...(currentProgress.question_states || {}) };
+      qStates[questionId] = state;
+      updates.question_states = qStates;
     }
 
     if (Object.keys(updates).length > 0) {

@@ -18,11 +18,11 @@ This document serves as the absolute ground truth for the **Phyne** project. AI 
 Absolutely **NO `localStorage`** is permitted. Because Phyne is a learning platform, users must be able to switch between laptops, tablets, and phones without losing data, progress, or preferences.
 - *Implementation:* All user preferences (e.g., Theme selections) and learning progress must be synced to Supabase (e.g., within `auth.user.user_metadata` or dedicated tables) via Server Actions.
 
-### B. Dynamic Content Loading Architecture
-To prevent routing files from becoming unmaintainable monoliths, lesson content is fully decoupled from the Next.js routing logic.
-- **Routing Engine:** `src/app/learn/[unitSlug]/[lessonSlug]/page.tsx`
-- **Content Directory:** `src/content/lessons/[unitSlug]/[lessonSlug].tsx`
-- *How it works:* The routing engine dynamically checks the file system for the content file. If it exists, it is dynamically imported and rendered. If not, a beautiful fallback placeholder is shown. This keeps the codebase highly scalable for hundreds of lessons.
+### B. Native Content Loading Architecture & Scaffolding
+To ensure structural consistency and maximum performance, lesson content is scaffolded directly as native Next.js routes, while mathematical problem data is decoupled into a centralized registry.
+- **Routing Engine:** Each lesson is a dedicated Next.js page (e.g., `src/app/learn/[unitSlug]/[lessonSlug]/page.tsx`). We do NOT use dynamic FS imports for lesson UIs.
+- **Question Registry:** `src/questions/[unitSlug]/[lessonSlug].tsx`
+- *How it works:* New lessons must be created using the `npm run create-lesson` script. This script automatically generates the boilerplate UI page, creates the isolated question bank, and wires the new questions into the global `allQuestions` registry (used by Daily Questions). This ensures perfect type safety and Next.js static optimizations.
 
 ### C. Interactive Physics Components
 (See `physics-component-rules.md` for full details).

@@ -18,6 +18,7 @@ interface LessonNodeLayoutProps {
 
 export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNodeLayoutProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [direction, setDirection] = useState(1);
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   
@@ -26,9 +27,21 @@ export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNode
   const completedSet = new Set(progress?.node_progress?.[lessonId]?.completed || [0]);
 
   useEffect(() => {
-    // Optimistically mark as completed on visit
-    markNodeCompleted(lessonId, currentIndex);
-  }, [currentIndex, lessonId, markNodeCompleted]);
+    if (progress && !isInitialized) {
+      const savedIndex = progress.node_progress?.[lessonId]?.current;
+      if (typeof savedIndex === 'number' && savedIndex < nodes.length) {
+        setCurrentIndex(savedIndex);
+      }
+      setIsInitialized(true);
+    }
+  }, [progress, lessonId, nodes.length, isInitialized]);
+
+  useEffect(() => {
+    // Optimistically mark as completed on visit, but only after initialization
+    if (isInitialized) {
+      markNodeCompleted(lessonId, currentIndex);
+    }
+  }, [currentIndex, lessonId, markNodeCompleted, isInitialized]);
 
   const navigateTo = (index: number) => {
     if (index === currentIndex) return;
