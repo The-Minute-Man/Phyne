@@ -1,8 +1,16 @@
 'use client';
 
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, { useState, ReactNode, useEffect, useRef } from 'react';
 import { getPyodide, checkEquivalenceSympy } from '@/lib/pyodide';
 import { AlertCircle, CheckCircle2, HelpCircle, XCircle, Loader2 } from 'lucide-react';
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'math-field': any;
+    }
+  }
+}
 
 interface MathInteractiveProblemProps {
   /** The question prompt to display */
@@ -37,7 +45,7 @@ export default function MathInteractiveProblem({
   const [attempts, setAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [pointsAwarded, setPointsAwarded] = useState<number | null>(null);
-
+  const mfRef = useRef<any>(null);
   const calculatePoints = (failedAttempts: number) => {
     if (isBeastQuestion) return 7; // Always 7 points for beast questions
     
@@ -51,6 +59,40 @@ export default function MathInteractiveProblem({
     // Preload pyodide in the background
     getPyodide().catch(console.error);
   }, []);
+
+  useEffect(() => {
+    // Provide fonts from CDN to prevent Next.js bundling errors
+    if (typeof window !== 'undefined') {
+      (window as any).mathlive = {
+        fontsDirectory: 'https://unpkg.com/mathlive@0.110.0/dist/fonts'
+      };
+    }
+    // Dynamically import mathlive so it doesn't break SSR
+    import('mathlive').catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    const mf = mfRef.current;
+    if (!mf) return;
+
+    const handleInput = (e: any) => {
+      // Extract the ascii-math representation to send to SymPy
+      setUserInput(e.target.getValue('ascii-math'));
+      if (status === 'incorrect' || status === 'error') setStatus('idle');
+    };
+
+    const handleFocusOut = () => {
+      // Prevent the math field from staying fully highlighted when clicking away
+      mf.executeCommand('clearSelection');
+    };
+
+    mf.addEventListener('input', handleInput);
+    mf.addEventListener('focusout', handleFocusOut);
+    return () => {
+      mf.removeEventListener('input', handleInput);
+      mf.removeEventListener('focusout', handleFocusOut);
+    };
+  }, [mfRef, status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,28 +130,62 @@ export default function MathInteractiveProblem({
 
   return (
     <div className="problem-panel">
+      <style>{`
+        body {
+          --keyboard-background: var(--background, #121212);
+          --keycap-background: rgba(255, 255, 255, 0.05);
+          --keycap-background-hover: rgba(255, 255, 255, 0.1);
+          --keycap-text: white;
+          --keycap-secondary-text: rgba(255, 255, 255, 0.5);
+          --keyboard-toolbar-text-color: white;
+          --primary-color: #ffffff;
+          --primary: #ffffff;
+        }
+        math-field {
+          --keyboard-toggle-color: white !important;
+          --primary-color: white !important;
+          --primary: white !important;
+          --text-color: white !important;
+        }
+        math-field::part(virtual-keyboard-toggle) {
+          color: white !important;
+          fill: white !important;
+          stroke: white !important;
+        }
+        math-field::part(menu-toggle) {
+          color: white !important;
+          fill: white !important;
+          stroke: white !important;
+        }
+      `}</style>
       <div className="mb-6">
         {prompt}
       </div>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem' }}>
-        <div className="flex flex-col gap-3">
-          <label htmlFor="math-input" className="text-sm font-medium text-text-secondary">
+        <div className="flex flex-col mb-2" style={{ gap: '1rem' }}>
+          <label htmlFor="math-input" className="text-sm font-medium text-text-secondary mb-1">
             Your Answer:
           </label>
           <div className="flex" style={{ gap: '2rem', alignItems: 'flex-start', flexDirection: 'row' }}>
             <div style={{ flex: 1 }}>
-              <input
-                id="math-input"
-                type="text"
-                value={userInput}
-                onChange={(e) => {
-                  setUserInput(e.target.value);
-                  if (status === 'incorrect' || status === 'error') setStatus('idle');
-                }}
-                disabled={status === 'correct' || status === 'gave_up'}
-                placeholder={variables.length > 0 ? `e.g., ${variables[0]} * 2` : "e.g., 42"}
-                className="input-field font-mono"
+              <math-field
+                ref={mfRef}
+                style={{ 
+                  width: '100%', 
+                  fontSize: '1.2rem', 
+                  minHeight: '38px',
+                  padding: '4px 8px',
+                  borderRadius: 'var(--radius)', 
+                  border: '1px solid var(--border)', 
+                  backgroundColor: 'rgba(255,255,255,0.03)', 
+                  color: 'inherit',
+                  outline: 'none',
+                  '--caret-color': 'white',
+                  '--selection-background-color': 'rgba(255, 255, 255, 0.2)',
+                  '--contains-highlight-background-color': 'transparent'
+                } as React.CSSProperties}
+                disabled={status === 'correct' || status === 'gave_up' ? true : undefined}
               />
               {status === 'error' && (
                 <p className="text-body-sm mt-2 flex items-center gap-sm" style={{ color: '#ef4444' }}>

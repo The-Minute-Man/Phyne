@@ -47,6 +47,16 @@ def check_equivalence(user_expr_str, correct_expr_str):
         return bool(diff == 0)
     except Exception as e:
         return "ERROR:" + str(e)
+
+def get_latex(user_expr_str):
+    if not user_expr_str.strip():
+        return ""
+    try:
+        # evaluate=False prevents SymPy from automatically simplifying things like 2/4 to 1/2 before rendering
+        user_expr = sympy.sympify(user_expr_str, evaluate=False)
+        return sympy.latex(user_expr)
+    except Exception:
+        return ""
         `);
         
         window.pyodideInstance = pyodide;
@@ -74,4 +84,15 @@ export async function checkEquivalenceSympy(userExpr: string, correctExpr: strin
   const checkFunc = pyodide.runPython('check_equivalence');
   const result = checkFunc(userExpr, correctExpr);
   return result; 
+}
+
+/**
+ * Converts a mathematical expression string to a LaTeX string using SymPy.
+ * Returns an empty string if the expression is invalid or empty.
+ */
+export async function getLatexSympy(expr: string): Promise<string> {
+  if (!expr.trim()) return '';
+  const pyodide = await getPyodide();
+  const latexFunc = pyodide.runPython('get_latex');
+  return latexFunc(expr);
 }
