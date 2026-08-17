@@ -41,7 +41,6 @@ export default async function LessonPage(
 
   // Content files have been migrated to native Next.js routes.
   // If a user hits this dynamic route, it means the lesson hasn't been built natively yet.
-  const DynamicContent = null;
 
   return (
     <div className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
@@ -56,10 +55,7 @@ export default async function LessonPage(
 
       {/* Removed lesson heading as requested */}
 
-      {DynamicContent ? (
-        <DynamicContent />
-      ) : (
-        <ScrollReveal delay={0.2}>
+      <ScrollReveal delay={0.2}>
           <div style={{ minHeight: '500px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
             {isQuiz ? (
               <>
@@ -82,7 +78,6 @@ export default async function LessonPage(
             )}
           </div>
         </ScrollReveal>
-      )}
     </div>
   );
 }
