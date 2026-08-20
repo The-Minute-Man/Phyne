@@ -132,6 +132,35 @@ export default function ProfilePage() {
           </div>
         </ScrollReveal>
 
+        {/* Learning Preferences */}
+        <ScrollReveal delay={0.16}>
+          <div className="glass-panel">
+            <h2 className="text-display-sm" style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>
+              Learning Preferences
+            </h2>
+            <div className="flex justify-between items-center flex-wrap gap-md" style={{ paddingBottom: '1rem' }}>
+              <div>
+                <span style={{ display: 'block', fontWeight: 500, marginBottom: '0.25rem' }}>Focus Mode</span>
+                <span className="text-body-sm text-muted">Hide navigation while scrolling through lessons</span>
+              </div>
+              <div className="flex gap-sm">
+                <button
+                  onClick={async () => {
+                    const currentMode = user.user_metadata?.focus_mode ?? true;
+                    const { updateFocusMode } = await import('../auth/actions');
+                    await updateFocusMode(!currentMode);
+                    window.location.reload();
+                  }}
+                  className={(user.user_metadata?.focus_mode ?? true) ? "btn-primary" : "btn-secondary"}
+                  style={{ padding: '0.5rem 1.5rem' }}
+                >
+                  {(user.user_metadata?.focus_mode ?? true) ? 'Enabled' : 'Disabled'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+
         {/* Grading & Analytics */}
         <ScrollReveal delay={0.17}>
           <div className="glass-panel">

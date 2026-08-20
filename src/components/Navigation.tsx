@@ -3,18 +3,26 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { useFocusVisibility } from '@/hooks/useFocusVisibility';
 
 interface NavigationProps {
-  user: unknown;
+  user: any;
   logoutAction: () => void;
 }
 
 export default function Navigation({ user, logoutAction }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const { showTop } = useFocusVisibility();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const isLearningRoute = pathname?.startsWith('/learn/') || pathname?.startsWith('/quiz/') || pathname?.startsWith('/test/');
+  const focusModeEnabled = user?.user_metadata?.focus_mode ?? true;
+  const shouldHide = isLearningRoute && focusModeEnabled && !showTop;
 
   return (
     <nav style={{ 
@@ -24,7 +32,9 @@ export default function Navigation({ user, logoutAction }: NavigationProps) {
       top: 0,
       backgroundColor: 'var(--nav-bg)',
       backdropFilter: 'blur(12px)',
-      zIndex: 100
+      zIndex: 100,
+      transform: shouldHide ? 'translateY(-100%)' : 'translateY(0)',
+      transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
     }}>
       <div className="container flex items-center justify-between" style={{ position: 'relative' }}>
         

@@ -2,6 +2,8 @@ import { combinedUnits } from '@/data/curriculum';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ScrollReveal from '@/components/ScrollReveal';
+import { createClient } from '@/utils/supabase/server';
+import { allQuestions } from '@/questions';
 
 export default async function LearnerUnitPage(
   props: { params: Promise<{ unitSlug: string }> }
@@ -11,6 +13,25 @@ export default async function LearnerUnitPage(
 
   if (!unit) {
     notFound();
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  let completedLessons: string[] = [];
+  let questionStates: any = {};
+  if (user) {
+    const { data: progressData } = await supabase
+      .from('user_progress')
+      .select('completed_lessons, question_states')
+      .eq('user_id', user.id)
+      .single();
+    if (progressData?.completed_lessons) {
+      completedLessons = progressData.completed_lessons;
+    }
+    if (progressData?.question_states) {
+      questionStates = progressData.question_states;
+    }
   }
 
   return (
@@ -58,6 +79,25 @@ export default async function LearnerUnitPage(
                   const displayTitle = title.replace(' (Interactive)', '');
                   const lessonSlug = displayTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                   
+                  const isCompleted = completedLessons.includes(lessonSlug);
+                  
+                  let lessonScoreText = '';
+                  if (isCompleted) {
+                    const lessonQuestions = allQuestions.filter(q => q.tags?.includes(lessonSlug) && q.tags?.includes(unit.slug));
+                    let earned = 0;
+                    let possible = 0;
+                    for (const q of lessonQuestions) {
+                      const state = questionStates[q.id];
+                      if (state && ['correct', 'gave_up'].includes(state.status)) {
+                        earned += (state.pointsAwarded || 0);
+                        possible += 7;
+                      }
+                    }
+                    if (possible > 0) {
+                      lessonScoreText = `${Math.round((earned / possible) * 100)}%`;
+                    }
+                  }
+                  
                   elements.push(
                     <Link 
                       key={`lesson-${index}`} 
@@ -65,17 +105,31 @@ export default async function LearnerUnitPage(
                       className="flex justify-between items-center hover-lift" 
                       style={{ 
                         padding: '1rem', 
-                        backgroundColor: 'var(--bg-secondary)', 
+                        backgroundColor: isCompleted ? 'rgba(52, 211, 153, 0.05)' : 'var(--bg-secondary)', 
                         borderRadius: '8px', 
-                        border: '1px solid var(--border)',
+                        border: isCompleted ? '1px solid rgba(52, 211, 153, 0.3)' : '1px solid var(--border)',
                         textDecoration: 'none',
                         color: 'var(--text-primary)'
                       }}
                     >
                       <div className="flex items-center gap-sm">
-                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ 
+                          width: '24px', 
+                          height: '24px', 
+                          borderRadius: '50%', 
+                          border: isCompleted ? '2px solid var(--accent)' : '2px solid var(--border)', 
+                          backgroundColor: isCompleted ? 'rgba(52, 211, 153, 0.1)' : 'transparent',
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center' 
+                        }}>
+                          {isCompleted && (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          )}
                         </div>
-                        <span style={{ fontWeight: 500 }}>{displayTitle}</span>
+                        <span style={{ fontWeight: 500, color: isCompleted ? 'var(--accent)' : 'inherit' }}>
+                          {displayTitle} {isCompleted && lessonScoreText && <span style={{ opacity: 0.8, marginLeft: '0.5rem', fontSize: '0.9em' }}>({lessonScoreText})</span>}
+                        </span>
                       </div>
                     </Link>
                   );

@@ -2,16 +2,27 @@
 
 import dynamic from 'next/dynamic';
 
-// Disable SSR for MathJax to prevent hydration mismatches where the server and client render different math DOM nodes
-const MathJax = dynamic(
+// Separate dynamic imports to provide different skeleton sizes for inline vs block math
+const MathJaxInline = dynamic(
   () => import('better-react-mathjax').then((mod) => mod.MathJax),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => <span className="inline-block rounded animate-pulse align-middle mx-1" style={{ backgroundColor: 'var(--border)', width: '2rem', height: '1rem' }} />
+  }
+);
+
+const MathJaxBlock = dynamic(
+  () => import('better-react-mathjax').then((mod) => mod.MathJax),
+  { 
+    ssr: false,
+    loading: () => <div className="block rounded animate-pulse" style={{ backgroundColor: 'var(--border)', width: '100%', height: '3rem', margin: '1rem 0' }} />
+  }
 );
 
 export function InlineMath({ math }: { math: string }) {
-  return <MathJax inline>{"\\(" + math + "\\)"}</MathJax>;
+  return <MathJaxInline inline>{"\\(" + math + "\\)"}</MathJaxInline>;
 }
 
 export function BlockMath({ math }: { math: string }) {
-  return <MathJax>{"\\[" + math + "\\]"}</MathJax>;
+  return <MathJaxBlock>{"\\[" + math + "\\]"}</MathJaxBlock>;
 }

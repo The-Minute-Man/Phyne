@@ -16,10 +16,35 @@ export default async function LearnerHome() {
   // Extract name from metadata or fallback to email
   const fullName = user.user_metadata?.full_name || 'Student';
 
-  // Fallback scores or pull from DB/metadata if available
-  const scores = user.user_metadata?.scores;
-  const overallPercentage = scores ? Math.round(calculateOverallGrade(scores)) : 0;
-  const letterGrade = scores ? getLetterGrade(overallPercentage) : 'N/A';
+  // Fetch actual user progress
+  const { data: progressData } = await supabase
+    .from('user_progress')
+    .select('*')
+    .eq('user_id', user.id)
+    .single();
+
+  let overallPercentage = 0;
+  let letterGrade = 'N/A';
+
+  if (progressData?.question_states) {
+    let totalEarned = 0;
+    let totalPossible = 0;
+    
+    // Each completed question is out of 7 points max
+    const qStates = progressData.question_states;
+    for (const key in qStates) {
+      const state = qStates[key];
+      if (['correct', 'gave_up'].includes(state.status)) {
+        totalEarned += (state.pointsAwarded || 0);
+        totalPossible += 7;
+      }
+    }
+
+    if (totalPossible > 0) {
+      overallPercentage = Math.round((totalEarned / totalPossible) * 100);
+      letterGrade = getLetterGrade(overallPercentage);
+    }
+  }
   
   // Last active lesson
   const lastActiveLessonPath = user.user_metadata?.last_lesson || '/learn/kinematics/scalars-and-vectors';

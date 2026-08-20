@@ -142,16 +142,9 @@ export default function MathInteractiveProblem({
       if (status === 'incorrect' || status === 'error') setStatus('idle');
     };
 
-    const handleFocusOut = () => {
-      // Prevent the math field from staying fully highlighted when clicking away
-      mf.executeCommand('clearSelection');
-    };
-
     mf.addEventListener('input', handleInput);
-    mf.addEventListener('focusout', handleFocusOut);
     return () => {
       mf.removeEventListener('input', handleInput);
-      mf.removeEventListener('focusout', handleFocusOut);
     };
   }, [mfRef, isMathliveLoaded, status]);
 
@@ -233,6 +226,12 @@ export default function MathInteractiveProblem({
               {isMathliveLoaded ? (
                 <math-field
                   ref={mfRef}
+                  onKeyDown={(e: any) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
                   style={{ 
                     width: '100%', 
                     fontSize: '1.2rem', 

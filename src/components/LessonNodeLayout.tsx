@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgress } from './ProgressProvider';
+import { useFocusVisibility } from '@/hooks/useFocusVisibility';
+import { useRouter } from 'next/navigation';
 
 export interface LessonNode {
   id: string;
@@ -21,8 +23,23 @@ export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNode
   const [isInitialized, setIsInitialized] = useState(false);
   const [direction, setDirection] = useState(1);
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
+  const [focusModeEnabled, setFocusModeEnabled] = useState(true);
+  const { showBottom } = useFocusVisibility();
+  const router = useRouter();
   
   const { progress, markNodeCompleted, markLessonCompleted } = useProgress();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { createClient } = await import('@/utils/supabase/client');
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setFocusModeEnabled(user.user_metadata?.focus_mode ?? true);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const completedSet = new Set(progress?.node_progress?.[lessonId]?.completed || [0]);
 
@@ -55,6 +72,7 @@ export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNode
     } else {
       // Mark lesson completed
       markLessonCompleted(lessonId, unitId);
+      router.push(`/learn/${unitId}`);
     }
   };
 
@@ -111,6 +129,8 @@ export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNode
           flexDirection: 'column',
           alignItems: 'center',
           gap: '1rem',
+          transform: (focusModeEnabled && !showBottom) ? 'translateY(100%)' : 'translateY(0)',
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
@@ -134,7 +154,7 @@ export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNode
             
             const isFirst = i === 0;
             const isLast = i === nodes.length - 1;
-            const xOffset = isFirst ? '0%' : isLast ? '-100%' : '-50%';
+            const xOffset = isFirst ? '0%' : isLast ? '0%' : '-50%';
             const leftPos = isFirst ? '0%' : isLast ? 'auto' : '50%';
             const rightPos = isLast ? '0%' : 'auto';
             
@@ -176,11 +196,10 @@ export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNode
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
           <button
             onClick={handleNext}
-            disabled={currentIndex === nodes.length - 1}
-            className={currentIndex === nodes.length - 1 ? 'btn-secondary' : 'btn-primary'}
-            style={{ opacity: currentIndex === nodes.length - 1 ? 0.5 : 1, padding: '0.5rem 2rem' }}
+            className={currentIndex === nodes.length - 1 ? 'btn-primary' : 'btn-primary'}
+            style={{ padding: '0.5rem 2rem' }}
           >
-            {currentIndex === nodes.length - 1 ? 'Lesson Complete' : 'Continue to Next Node'}
+            {currentIndex === nodes.length - 1 ? 'Finish Lesson & Return' : 'Continue to Next Node'}
           </button>
         </div>
       </div>

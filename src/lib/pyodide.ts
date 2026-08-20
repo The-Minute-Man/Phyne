@@ -39,12 +39,37 @@ export async function getPyodide(): Promise<PyodideInterface> {
         // Define a python helper function to evaluate math expressions safely
         pyodide.runPython(`
 import sympy
+from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+
 def check_equivalence(user_expr_str, correct_expr_str):
     try:
-        user_expr = sympy.sympify(user_expr_str)
-        correct_expr = sympy.sympify(correct_expr_str)
+        t = standard_transformations + (implicit_multiplication_application, convert_xor)
+        user_expr = parse_expr(user_expr_str, transformations=t)
+        correct_expr = parse_expr(correct_expr_str, transformations=t)
+        
+        # Case-insensitive variable matching
+        for us in user_expr.free_symbols:
+            for cs in correct_expr.free_symbols:
+                if str(us).lower() == str(cs).lower():
+                    user_expr = user_expr.subs(us, cs)
+                    
         diff = sympy.simplify(user_expr - correct_expr)
-        return bool(diff == 0)
+        if diff == 0:
+            return True
+            
+        # For numerical answers, allow a small floating-point tolerance (~1.5% relative or 0.01 absolute)
+        if not diff.free_symbols:
+            try:
+                user_val = float(user_expr.evalf())
+                correct_val = float(correct_expr.evalf())
+                if abs(correct_val) > 1e-9:
+                    return bool(abs((user_val - correct_val) / correct_val) < 0.015)
+                else:
+                    return bool(abs(user_val) < 0.01)
+            except Exception:
+                pass
+                
+        return False
     except Exception as e:
         return "ERROR:" + str(e)
 
@@ -52,8 +77,8 @@ def get_latex(user_expr_str):
     if not user_expr_str.strip():
         return ""
     try:
-        # evaluate=False prevents SymPy from automatically simplifying things like 2/4 to 1/2 before rendering
-        user_expr = sympy.sympify(user_expr_str, evaluate=False)
+        t = standard_transformations + (implicit_multiplication_application, convert_xor)
+        user_expr = parse_expr(user_expr_str, evaluate=False, transformations=t)
         return sympy.latex(user_expr)
     except Exception:
         return ""

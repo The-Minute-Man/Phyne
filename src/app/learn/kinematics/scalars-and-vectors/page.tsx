@@ -79,6 +79,21 @@ export default function ScalarsAndVectors() {
   // 3D Time State
   const [time, setTime] = useState(0);
 
+  // Subtraction State
+  const pointA = useMovablePoint([-2, 3]);
+  const pointB = useMovablePoint([3, 2]);
+
+  const [mathSubA, setMathSubA] = React.useState([-2, 3]);
+  const [mathSubB, setMathSubB] = React.useState([3, 2]);
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setMathSubA([pointA.x, pointA.y]);
+      setMathSubB([pointB.x, pointB.y]);
+    }, 150);
+    return () => clearTimeout(handler);
+  }, [pointA.x, pointA.y, pointB.x, pointB.y]);
+
   const lessonNodes = [
     {
       id: 'intuition',
@@ -161,12 +176,104 @@ export default function ScalarsAndVectors() {
       )
     },
     {
+      id: 'unit-vectors',
+      title: 'Unit Vectors',
+      content: (
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+          <section style={{ marginBottom: '3rem' }}>
+            <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>3. Unit Vectors: Pure Direction</h2>
+            <p className="text-body-md" style={{ marginBottom: '1rem' }}>
+              Sometimes we only care about the <em>direction</em> of a vector, and want to strip away its magnitude. We do this by creating a <strong>unit vector</strong>, which has a length of exactly 1.
+            </p>
+            <p className="text-body-md" style={{ marginBottom: '1rem' }}>
+              To find the unit vector <InlineMath math="\hat{u}" /> in the direction of any vector <InlineMath math="\vec{v}" />, we simply divide the vector by its own magnitude:
+            </p>
+            <BlockMath math="\hat{u} = \frac{\vec{v}}{|\vec{v}|}" />
+            <p className="text-body-md" style={{ marginTop: '1rem' }}>
+              This is why the standard basis vectors are called <InlineMath math="\hat{i}" />, <InlineMath math="\hat{j}" />, and <InlineMath math="\hat{k}" /> — the "hat" symbol specifically denotes that they are unit vectors!
+            </p>
+          </section>
+        </div>
+      )
+    },
+    {
+      id: 'vector-subtraction',
+      title: 'Relative Vectors',
+      content: (
+        <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+          <section style={{ marginBottom: '3rem' }}>
+            <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>4. Vector Subtraction & Relative Motion</h2>
+            <p className="text-body-md" style={{ marginBottom: '1rem' }}>
+              Vector subtraction is just adding a negative vector: <InlineMath math="\vec{A} - \vec{B} = \vec{A} + (-\vec{B})" />. Geometrically, this means flipping the direction of <InlineMath math="\vec{B}" /> and placing it tail-to-tip with <InlineMath math="\vec{A}" />.
+            </p>
+            <p className="text-body-md" style={{ marginBottom: '1.5rem' }}>
+              In AP Physics, vector subtraction is critical for <strong>relative velocity</strong>. If Car A is moving at <InlineMath math="\vec{v}_A" /> and Car B is moving at <InlineMath math="\vec{v}_B" />, the velocity of A <em>relative to</em> B is <InlineMath math="\vec{v}_{A/B} = \vec{v}_A - \vec{v}_B" />.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem', alignItems: 'start' }}>
+              <div style={{ background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                <Mafs height={400}>
+                  <Coordinates.Cartesian />
+                  {/* Vector A */}
+                  <Vector tail={[0, 0]} tip={[pointA.x, pointA.y]} color={Theme.blue} />
+                  {/* Vector B */}
+                  <Vector tail={[0, 0]} tip={[pointB.x, pointB.y]} color={Theme.red} />
+                  
+                  {/* -B Vector attached to A's tip (Tail-to-tip method) */}
+                  <Vector tail={[pointA.x, pointA.y]} tip={[pointA.x - pointB.x, pointA.y - pointB.y]} color={Theme.red} svgLineProps={{ strokeDasharray: "10, 10" }} />
+                  
+                  {/* Resultant A - B from origin */}
+                  <Vector tail={[0, 0]} tip={[pointA.x - pointB.x, pointA.y - pointB.y]} color={Theme.green} svgLineProps={{ strokeDasharray: "10, 10" }} />
+                  
+                  {/* Relative Vector A/B (from B to A) showing translation invariance */}
+                  <Vector tail={[pointB.x, pointB.y]} tip={[pointA.x, pointA.y]} color={Theme.green} />
+                  
+                  {pointA.element}
+                  {pointB.element}
+                </Mafs>
+              </div>
+
+              <div style={{
+                padding: '1.5rem',
+                borderRadius: '12px',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border)'
+              }}>
+                <h3 className="text-body-lg" style={{ marginBottom: '1rem' }}>Live Math</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div>
+                    <span className="text-secondary text-body-sm" style={{ color: 'var(--blue)' }}>Vector A (Blue)</span>
+                    <BlockMath math={`\\vec{A} = ${mathSubA[0].toFixed(1)}\\hat{i} + ${mathSubA[1].toFixed(1)}\\hat{j}`} />
+                  </div>
+                  <div>
+                    <span className="text-secondary text-body-sm" style={{ color: 'var(--red)' }}>Vector B (Red)</span>
+                    <BlockMath math={`\\vec{B} = ${mathSubB[0].toFixed(1)}\\hat{i} + ${mathSubB[1].toFixed(1)}\\hat{j}`} />
+                  </div>
+                  <div>
+                    <span className="text-secondary text-body-sm" style={{ color: 'var(--green)' }}>Resultant A - B (Green)</span>
+                    <BlockMath math={`\\vec{A} - \\vec{B} = ${(mathSubA[0] - mathSubB[0]).toFixed(1)}\\hat{i} + ${(mathSubA[1] - mathSubB[1]).toFixed(1)}\\hat{j}`} />
+                  </div>
+                  <p className="text-body-sm text-secondary" style={{ marginTop: '0.5rem', lineHeight: 1.5 }}>
+                    Notice the two red and two green vectors! The second red vector is <InlineMath math="-\vec{B}" />, attached to the tip of <InlineMath math="\vec{A}" />.
+                    <br /><br />
+                    The green resultant connects the origin to this new tip. But notice how it has the <em>exact same length and direction</em> as the vector pointing from <InlineMath math="\vec{B}" /> to <InlineMath math="\vec{A}" />.
+                    <br /><br />
+                    <strong style={{color: 'white'}}>Crucial Rule:</strong> A vector is defined ONLY by its magnitude and direction. <strong>It doesn't matter where a vector begins in space.</strong> Because both green arrows have the same length and point in the same direction, they are the <em>exact same mathematical vector</em>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      )
+    },
+    {
       id: 'calculus',
       title: 'Calculus Bridge',
       content: (
         <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section style={{ marginBottom: '3rem' }}>
-        <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>3. The Calculus Bridge: Time-Dependent Vectors</h2>
+        <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>5. The Calculus Bridge: Time-Dependent Vectors</h2>
         <p className="text-body-md" style={{ marginBottom: '1rem' }}>
           In standard physics, vectors are static. In AP Physics C, space is dynamic. If an object is moving, its position vector changes as a function of time, <InlineMath math="t" />:
         </p>
@@ -190,7 +297,7 @@ export default function ScalarsAndVectors() {
       content: (
         <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section style={{ marginBottom: '3rem' }}>
-        <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>4. 3D Time-Evolving Path</h2>
+        <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>6. 3D Time-Evolving Path</h2>
         <p className="text-body-md" style={{ marginBottom: '1.5rem' }}>
           Scrub the time slider to see a particle trace a 3D path. The cyan vector is the position vector <InlineMath math="\vec{r}(t)" />. Note how it is composed of its shadows (projections) on the axes.
         </p>
@@ -223,7 +330,7 @@ export default function ScalarsAndVectors() {
       content: (
         <div style={{ paddingTop: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <section>
-        <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>5. HRK Master Practice</h2>
+        <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>7. Master Practice</h2>
         <p className="text-body-md" style={{ marginBottom: '2rem' }}>
           The following problems are adapted from the rigorous pedagogical standards of <em>Resnick, Halliday, and Krane</em> (Chapter 2: Vectors). Enter your answers algebraically using the variables provided, or numerically if no variables are given. You can use standard math syntax like <code>*</code>, <code>+</code>, <code>/</code>, <code>^</code>, and <code>sqrt()</code>.
         </p>

@@ -177,3 +177,19 @@ export async function updateTheme(theme: string) {
   revalidatePath('/', 'layout')
   return { success: true }
 }
+
+export async function updateFocusMode(enabled: boolean) {
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      focus_mode: enabled
+    }
+  })
+
+  if (error) {
+    return { error: error.message, success: false }
+  }
+
+  revalidatePath('/', 'layout')
+  return { success: true }
+}
