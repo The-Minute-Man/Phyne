@@ -39,6 +39,9 @@ export default async function RootLayout({
       packages: { '[+]': ['html'] },
       inlineMath: [['\\(', '\\)']],
       displayMath: [['\\[', '\\]']]
+    },
+    options: {
+      enableMenu: false
     }
   };
 

@@ -207,12 +207,15 @@ export default function MathInteractiveProblem({
           stroke: white !important;
         }
         math-field::part(menu-toggle) {
-          color: white !important;
-          fill: white !important;
-          stroke: white !important;
+          display: none !important;
         }
       `}</style>
       <div className="mb-6">
+        {isBeastQuestion && (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.25rem 0.75rem', background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.2)', borderRadius: '1rem', color: '#c084fc', fontSize: '0.8rem', fontWeight: 600, marginBottom: '1rem' }}>
+            Beast Mode: Optional Challenge (+7 extra points, up to 100% lesson grade)
+          </div>
+        )}
         {prompt}
       </div>
 

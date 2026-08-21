@@ -4,6 +4,7 @@ import Link from 'next/link';
 import ScrollReveal from '@/components/ScrollReveal';
 import { createClient } from '@/utils/supabase/server';
 import { allQuestions } from '@/questions';
+import { getLessonGrade } from '@/utils/grading';
 
 export default async function LearnerUnitPage(
   props: { params: Promise<{ unitSlug: string }> }
@@ -71,7 +72,6 @@ export default async function LearnerUnitPage(
               {(() => {
                 const elements: React.ReactNode[] = [];
                 const totalLessons = unit.lessons.length;
-                const quiz1Index = Math.floor(totalLessons / 3) - 1;
                 const quiz2Index = Math.floor((totalLessons * 2) / 3) - 1;
                 
                 unit.lessons.forEach((lesson, index) => {
@@ -83,18 +83,9 @@ export default async function LearnerUnitPage(
                   
                   let lessonScoreText = '';
                   if (isCompleted) {
-                    const lessonQuestions = allQuestions.filter(q => q.tags?.includes(lessonSlug) && q.tags?.includes(unit.slug));
-                    let earned = 0;
-                    let possible = 0;
-                    for (const q of lessonQuestions) {
-                      const state = questionStates[q.id];
-                      if (state && ['correct', 'gave_up'].includes(state.status)) {
-                        earned += (state.pointsAwarded || 0);
-                        possible += 7;
-                      }
-                    }
-                    if (possible > 0) {
-                      lessonScoreText = `${Math.round((earned / possible) * 100)}%`;
+                    const grade = getLessonGrade(lessonSlug, unit.slug, questionStates, allQuestions);
+                    if (grade !== null) {
+                      lessonScoreText = `${grade}%`;
                     }
                   }
                   
@@ -134,31 +125,7 @@ export default async function LearnerUnitPage(
                     </Link>
                   );
 
-                  if (index === Math.max(0, quiz1Index)) {
-                    elements.push(
-                      <Link 
-                        key="quiz-1" 
-                        href={`/learn/${unit.slug}/concept-quiz-1`} 
-                        className="flex justify-between items-center hover-lift" 
-                        style={{ 
-                          padding: '1rem', 
-                          backgroundColor: 'rgba(59, 130, 246, 0.05)', 
-                          borderRadius: '8px', 
-                          border: '1px solid rgba(59, 130, 246, 0.3)',
-                          textDecoration: 'none',
-                          color: 'var(--text-primary)'
-                        }}
-                      >
-                        <div className="flex items-center gap-sm">
-                          <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid rgba(59, 130, 246, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          </div>
-                          <span style={{ fontWeight: 500, color: '#3b82f6' }}>Concept Quiz 1</span>
-                        </div>
-                      </Link>
-                    );
-                  }
-
-                  if (index === Math.max(0, quiz2Index) && index !== quiz1Index) {
+                  if (index === Math.max(0, quiz2Index)) {
                     elements.push(
                       <Link 
                         key="quiz-2" 
@@ -176,7 +143,7 @@ export default async function LearnerUnitPage(
                         <div className="flex items-center gap-sm">
                           <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid rgba(59, 130, 246, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           </div>
-                          <span style={{ fontWeight: 500, color: '#3b82f6' }}>Concept Quiz 2</span>
+                          <span style={{ fontWeight: 500, color: '#3b82f6' }}>Concept Quiz</span>
                         </div>
                       </Link>
                     );

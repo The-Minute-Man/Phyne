@@ -16,13 +16,11 @@ export default async function LessonPage(
   }
 
   // Determine if it's a quiz or a lesson
-  const isQuiz1 = params.lessonSlug === 'concept-quiz-1';
-  const isQuiz2 = params.lessonSlug === 'concept-quiz-2';
-  const isQuiz = isQuiz1 || isQuiz2;
+  const isQuiz = params.lessonSlug === 'concept-quiz-2';
 
   let lessonTitle = '';
   if (isQuiz) {
-    lessonTitle = isQuiz1 ? 'Concept Quiz 1' : 'Concept Quiz 2';
+    lessonTitle = 'Concept Quiz';
   } else {
     // Find the specific lesson
     const foundLesson = unit.lessons.find((lesson) => {

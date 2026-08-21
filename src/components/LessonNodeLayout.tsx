@@ -150,7 +150,8 @@ export default function LessonNodeLayout({ nodes, lessonId, unitId }: LessonNode
             const isCompleted = completedSet.has(i);
             const isActive = i === currentIndex;
             const isHovered = hoveredNode === i;
-            const showTitle = isActive || isHovered;
+            const isVisible = !focusModeEnabled || showBottom;
+            const showTitle = (isActive || isHovered) && isVisible;
             
             const isFirst = i === 0;
             const isLast = i === nodes.length - 1;

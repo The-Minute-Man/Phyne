@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { combinedUnits } from '@/data/curriculum';
 import ScrollReveal from '@/components/ScrollReveal';
-import { calculateOverallGrade, getLetterGrade } from '@/utils/grading';
+import { calculateOverallGrade, getLetterGrade, getOverallQuestionsGrade } from '@/utils/grading';
+import { allQuestions } from '@/questions';
 
 export default async function LearnerHome() {
   const supabase = await createClient();
@@ -27,27 +28,48 @@ export default async function LearnerHome() {
   let letterGrade = 'N/A';
 
   if (progressData?.question_states) {
-    let totalEarned = 0;
-    let totalPossible = 0;
-    
-    // Each completed question is out of 7 points max
-    const qStates = progressData.question_states;
-    for (const key in qStates) {
-      const state = qStates[key];
-      if (['correct', 'gave_up'].includes(state.status)) {
-        totalEarned += (state.pointsAwarded || 0);
-        totalPossible += 7;
-      }
-    }
-
-    if (totalPossible > 0) {
-      overallPercentage = Math.round((totalEarned / totalPossible) * 100);
+    const grade = getOverallQuestionsGrade(progressData.question_states, allQuestions);
+    if (grade !== null) {
+      overallPercentage = grade;
       letterGrade = getLetterGrade(overallPercentage);
     }
   }
   
-  // Last active lesson
-  const lastActiveLessonPath = user.user_metadata?.last_lesson || '/learn/kinematics/scalars-and-vectors';
+  // Determine the next lesson based on completed lessons
+  let nextLessonPath = '/learn/kinematics/scalars-and-vectors';
+  const completedLessons = progressData?.completed_lessons || [];
+
+  let foundNext = false;
+  for (const unit of combinedUnits) {
+    if (foundNext) break;
+    const totalLessons = unit.lessons.length;
+    const quiz2Index = Math.floor((totalLessons * 2) / 3) - 1;
+    
+    for (let i = 0; i < unit.lessons.length; i++) {
+      const lesson = unit.lessons[i];
+      const title = typeof lesson === 'string' ? lesson : lesson.title;
+      const displayTitle = title.replace(' (Interactive)', '');
+      const lessonSlug = displayTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      
+      if (!completedLessons.includes(lessonSlug)) {
+        nextLessonPath = `/learn/${unit.slug}/${lessonSlug}`;
+        foundNext = true;
+        break;
+      }
+      
+      if (i === Math.max(0, quiz2Index)) {
+        if (!completedLessons.includes('concept-quiz-2')) {
+          nextLessonPath = `/learn/${unit.slug}/concept-quiz-2`;
+          foundNext = true;
+          break;
+        }
+      }
+    }
+  }
+
+  if (!foundNext && completedLessons.length > 0) {
+    nextLessonPath = '/roadmap';
+  }
 
   return (
     <div className="container section-padding" style={{ paddingBottom: '100px' }}>
@@ -79,7 +101,7 @@ export default async function LearnerHome() {
 
           <ScrollReveal delay={0.2}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <Link href={lastActiveLessonPath} className="btn-primary hover-lift" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '0.75rem 1.5rem', fontSize: '1rem', width: '100%', maxWidth: '250px' }}>
+              <Link href={nextLessonPath} className="btn-primary hover-lift" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '0.75rem 1.5rem', fontSize: '1rem', width: '100%', maxWidth: '250px' }}>
                 Continue
               </Link>
               <Link href="/daily" className="btn-secondary hover-lift" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '0.75rem 1.5rem', fontSize: '1rem', width: '100%', maxWidth: '250px' }}>

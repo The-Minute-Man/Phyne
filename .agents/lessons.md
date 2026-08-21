@@ -21,7 +21,7 @@ This script automatically:
 
 Every lesson must be a comprehensive learning module, not just a list of text. When building a lesson page (`src/app/learn/[unitSlug]/[lessonSlug]/page.tsx` or dynamic content files), it must contain:
 - **Explanations & Theory**: Clear, concise explanations of the physical phenomena and formulas.
-- **Interactables & Visualizations**: Use dynamic components, sliders, and interactive simulations to allow students to build an intuitive understanding of the physics.
+- **Interactables & Visualizations**: Use dynamic components, sliders, and interactive simulations to allow students to build an intuitive understanding of the physics. **CRITICAL: Any time-based slider or manual scrubbing element MUST use an `AutoScrubber` component to allow the user to automatically play/pause the animation while still supporting manual overrides. EXCEPTION: Do not use `AutoScrubber` if the slider directly drives heavy Live Math rendering (e.g. MathJax) on every frame, as this will cause glitches.**
 - **HRK Questions**: Lessons must include practice problems sourced directly from the **Halliday, Resnick, Krane (HRK)** textbook. You can find these reference materials in the `resources` folder in the project root. Ensure you adapt them to be interactive and use our components.
 
 ## 3. Lesson Component Structure & UI

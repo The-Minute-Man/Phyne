@@ -101,15 +101,9 @@ export default function DailyQuestionPage() {
               Daily Practice
             </h1>
             <p className="text-body-lg text-muted">
-              Solve {dailyQuestions.length} questions across topics you've covered to maintain your streak.
+              Solve {dailyQuestions.length} questions across topics you've covered.
             </p>
           </div>
-          {progress && (
-            <div style={{ textAlign: 'right', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px' }}>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Current Streak</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent)' }}>🔥 {progress.daily_streak} days</div>
-            </div>
-          )}
         </header>
       </ScrollReveal>
 
@@ -119,7 +113,7 @@ export default function DailyQuestionPage() {
             <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
             <h2 className="text-display-sm" style={{ marginBottom: '1rem' }}>You're all done for today!</h2>
             <p className="text-muted text-body-lg" style={{ maxWidth: '600px', marginBottom: '2rem' }}>
-              Great job maintaining your streak. Come back tomorrow for a new set of challenges.
+              Great job! Come back tomorrow for a new set of challenges.
             </p>
             <Link href="/home" className="btn-primary">
               Return to Dashboard

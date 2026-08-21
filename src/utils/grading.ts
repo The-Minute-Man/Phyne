@@ -51,3 +51,47 @@ export function getLetterGrade(score: number): string {
   if (score >= 59.50) return 'D';
   return 'F';
 }
+
+/**
+ * Gets the grade percentage for a specific lesson
+ */
+export function getLessonGrade(lessonSlug: string, unitSlug: string, questionStates: Record<string, any>, allQuestions: any[]): number | null {
+  const lessonQuestions = allQuestions.filter(q => q.tags?.includes(lessonSlug) && q.tags?.includes(unitSlug));
+  let earned = 0;
+  let possible = 0;
+
+  for (const q of lessonQuestions) {
+    const state = questionStates[q.id];
+    if (state && ['correct', 'gave_up'].includes(state.status)) {
+      earned += (state.pointsAwarded || 0);
+      if (!q.isBeastQuestion) {
+        possible += 7;
+      }
+    }
+  }
+
+  if (possible === 0) return null;
+  return Math.min(100, Math.round((earned / possible) * 100));
+}
+
+/**
+ * Gets the overall grade percentage across all answered questions
+ */
+export function getOverallQuestionsGrade(questionStates: Record<string, any>, allQuestions: any[]): number | null {
+  let earned = 0;
+  let possible = 0;
+
+  for (const key in questionStates) {
+    const state = questionStates[key];
+    if (['correct', 'gave_up'].includes(state.status)) {
+      earned += (state.pointsAwarded || 0);
+      const qObj = allQuestions.find(q => q.id === key);
+      if (!qObj?.isBeastQuestion) {
+        possible += 7;
+      }
+    }
+  }
+
+  if (possible === 0) return null;
+  return Math.min(100, Math.round((earned / possible) * 100));
+}

@@ -10,12 +10,29 @@ interface QuestionRendererProps {
 }
 
 export default function QuestionRenderer({ question, category = 'lessons', onComplete }: QuestionRendererProps) {
-  const { progress, answerQuestion, saveQuestionState } = useProgress();
+  const { progress, loading, answerQuestion, saveQuestionState } = useProgress();
 
-  // Generate parameters once per mount
-  const params = useMemo(() => {
-    return question.generateParams ? question.generateParams() : {};
-  }, [question]);
+  const [params, setParams] = React.useState<any>(null);
+
+  // Generate or load sticky parameters once progress is fully loaded
+  React.useEffect(() => {
+    if (loading || params) return;
+
+    const savedState = progress?.question_states?.[question.id] as any;
+    
+    if (savedState?.params) {
+      // Load sticky params from Supabase
+      setParams(savedState.params);
+    } else {
+      // Generate new params and save them to Supabase so they survive refreshes
+      const generatedParams = question.generateParams ? question.generateParams() : {};
+      setParams(generatedParams);
+      
+      if (Object.keys(generatedParams).length > 0) {
+        saveQuestionState(question.id, { ...(savedState || {}), params: generatedParams });
+      }
+    }
+  }, [loading, progress, params, question, saveQuestionState]);
 
   const savedState = progress?.question_states?.[question.id];
 
@@ -28,6 +45,14 @@ export default function QuestionRenderer({ question, category = 'lessons', onCom
   const handleStateChange = async (state: { userInput: string; attempts: number; status: 'idle' | 'loading_pyodide' | 'checking' | 'correct' | 'incorrect' | 'error' | 'gave_up'; pointsAwarded: number }) => {
     await saveQuestionState(question.id, state);
   };
+
+  if (!params) {
+    return (
+      <div style={{ padding: '2rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+        <div className="animate-pulse" style={{ width: '100%', height: '100px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}></div>
+      </div>
+    );
+  }
 
   const correctExpression = typeof question.correctExpression === 'function'
     ? question.correctExpression(params)

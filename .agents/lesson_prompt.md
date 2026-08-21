@@ -8,6 +8,9 @@ Follow these strict guidelines when designing and scaffolding a new lesson:
 - **Locate Required Materials**: Both the AP Physics C Course and Exam Description (CED) and the Resnick, Halliday, and Krane (HRK) textbook are provided in the `resources/` folder. You MUST actively read the relevant sections in these documents before beginning any design work.
 - **Check the AP CED First**: Before outlining any content, you MUST cross-reference the 2024-2025 AP Physics C Course and Exam Description (CED) to determine exactly what concepts belong in this specific unit.
 - **Just-In-Time Teaching**: Do NOT introduce mathematical tools or physics concepts prematurely. For example, do not teach the Dot Product in Unit 1 Kinematics—wait until Unit 3 (Work & Energy). Do not teach the Cross Product until Unit 5 (Torque).
+- **Formatting Standards**: 
+  - Wrap mathematical text and variable symbols in MathJax: `<InlineMath math="x(t)" />`.
+  - Format all calculated floating point numbers to a maximum of 3 decimal places using `Number(value.toFixed(3))` so they don't produce absurdly long decimals like `42.666666666666664`.
 - **Filter HRK through the AP Lens**: HRK often introduces advanced mathematical tools (like vector algebra) all at once in early chapters. You must filter HRK's sequence through the AP CED timeline. Only teach what is explicitly required to solve the physics of the *current* unit.
 
 ## 2. Pedagogical Rigor
@@ -15,16 +18,18 @@ Follow these strict guidelines when designing and scaffolding a new lesson:
 - **Calculus Integration**: Emphasize the calculus bridge early and often. Show how algebraic formulas are derived from first principles.
 
 ## 3. Interactive Visualizations (NO "Wall of Text" Nodes)
-- **Mandatory Visuals**: You must avoid creating nodes that are purely walls of text and static math. Every major conceptual node MUST include an interactive visualization.
+- **Mandatory Visuals**: You must avoid consistently creating nodes that are purely walls of text and static math. Every major conceptual node MUST include an interactive visualization.
 - **Technology Stack**: 
   - Use `Mafs` for 2D interactive graphs, vectors, kinematics, and coordinate systems.
   - Use `@react-three/fiber` (Three.js) for 3D visualizations or time-evolving paths.
 - **Dynamic State**: Hook up interactive elements using React state (e.g., draggable vectors, time scrubbers, mass sliders) so students can physically interact with the mathematical relationships.
+- **Auto-Scrubbing**: Any time-based interactive diagram or manual slider MUST include an Auto-Play / Auto-Scrub toggle (e.g., using an `AutoScrubber` component) so that the animation can play automatically. **EXCEPTION:** Do NOT use the AutoScrubber if the slider directly drives heavy "Live Math" rendering (like MathJax updates on every frame), as this will cause severe performance glitches. In those cases, use a standard manual slider.
 
 ## 4. Master Practice Problem Constraints (CRITICAL PITFALL AVOIDANCE)
-- **Problem Bank vs Lesson Limit**: You must generate a total of **10 to 15** high-quality practice problems for the unit's problem bank. However, exactly **5 to 7** of these problems must be explicitly tagged as `lesson-dedicated` so they appear in the end-of-lesson `Master Practice` node. The remaining problems must be tagged as `daily-practice` or `daily-pool` so they can be fed into the daily spaced-repetition engine.
+- **Problem Bank vs Lesson Limit**: You must generate a total of **10 to 15** high-quality practice problems for the unit's problem bank. However, exactly **7** of these problems must be explicitly tagged as `lesson-dedicated` so they appear in the end-of-lesson `Master Practice` node. The remaining problems must be tagged as `daily-practice` or `daily-pool` so they can be fed into the daily spaced-repetition engine.
 - **Naming Convention**: Do NOT name problems using meta-labels like "HRK Concept: [Name]". Name them natively as "Problem X: [Descriptive Title]".
 - **Composite Problems**: Instead of many simple questions, combine aspects of the curriculum into composite, multi-step problems that test deep, holistic understanding.
+- **Beast Questions**: The final question in a lesson must be a "Beast Question" (`isBeastQuestion: true`) that pushes the student's boundaries. It acts as true extra credit: grading logic must NOT add points to the `totalPossible` denominator for beast questions, but still add their score to `totalEarned`, capping total grade percentage at 100%.
 - **Formatting**: All problems must be exported as an array of `Question` types and rendered using the platform's `QuestionRenderer`.
 
 ## 5. Execution Workflow

@@ -20,12 +20,12 @@ export async function GET() {
     return NextResponse.json({ error: 'No progress found to reset.' });
   }
 
-  // Remove sv-3 from question_states
+  // Remove dva-3 from question_states
   const qStates = { ...currentProgress.question_states };
-  delete qStates['sv-3'];
+  delete qStates['dva-3'];
   
-  // Remove sv-3 from completed_questions
-  const completedQs = currentProgress.completed_questions.filter((id: string) => id !== 'sv-3');
+  // Remove dva-3 from completed_questions
+  const completedQs = currentProgress.completed_questions.filter((id: string) => id !== 'dva-3');
 
   // Update Supabase
   const { error } = await supabase
@@ -42,6 +42,6 @@ export async function GET() {
 
   return NextResponse.json({ 
     success: true, 
-    message: 'Question sv-3 has been reset successfully! You can close this tab and refresh your lesson page to try the question again.' 
+    message: 'Question dva-3 has been reset successfully! You can close this tab and refresh your lesson page to try the question again.' 
   });
 }

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useFocusVisibility } from '@/hooks/useFocusVisibility';
+import { createClient } from '@/utils/supabase/client';
 
 interface NavigationProps {
   user: any;
@@ -21,7 +22,20 @@ export default function Navigation({ user, logoutAction }: NavigationProps) {
   };
 
   const isLearningRoute = pathname?.startsWith('/learn/') || pathname?.startsWith('/quiz/') || pathname?.startsWith('/test/');
-  const focusModeEnabled = user?.user_metadata?.focus_mode ?? true;
+  
+  const [focusModeEnabled, setFocusModeEnabled] = useState(user?.user_metadata?.focus_mode ?? true);
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        setFocusModeEnabled(currentUser.user_metadata?.focus_mode ?? true);
+      }
+    };
+    fetchUser();
+  }, [pathname]);
+
   const shouldHide = isLearningRoute && focusModeEnabled && !showTop;
 
   return (
