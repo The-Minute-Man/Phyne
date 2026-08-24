@@ -1,0 +1,17 @@
+class GeminiAPIEndpoint(ModelEndpoint):
+  """Endpoint for the Gemini Developer API."""
+
+  api_key: str | None = None
+  options: GeminiModelOptions | None = None
+
+  def validate_endpoint(self) -> None:
+    if self.base_url:
+      return  # External API, validation is done by the external API.
+
+    if not (self.api_key or os.environ.get("GEMINI_API_KEY")):
+      raise ValueError(
+          "A Gemini API key is required. Set it via"
+          " GEMINI_API_KEY environment variable or via"
+          " LocalAgentConfig(api_key=...)."
+      )
+
