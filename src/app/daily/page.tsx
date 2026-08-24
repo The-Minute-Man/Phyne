@@ -20,7 +20,6 @@ function mulberry32(a: number) {
 
 export default function DailyQuestionPage() {
   const { progress, loading, completeDailySet } = useProgress();
-  const [completedLocalIds, setCompletedLocalIds] = useState<Set<string>>(new Set());
   const [hasCompletedSet, setHasCompletedSet] = useState(false);
 
   const today = new Date().toISOString().split('T')[0];
@@ -57,14 +56,22 @@ export default function DailyQuestionPage() {
     return shuffled.slice(0, 5);
   }, [progress, today]);
 
+  const completedCount = useMemo(() => {
+    if (!progress?.question_states || dailyQuestions.length === 0) return 0;
+    return dailyQuestions.filter(q => {
+      const state = progress.question_states[q.id];
+      return state && (state.status === 'correct' || state.status === 'gave_up');
+    }).length;
+  }, [dailyQuestions, progress?.question_states]);
+
   // Check completion
   useEffect(() => {
-    if (dailyQuestions.length > 0 && completedLocalIds.size === dailyQuestions.length && !hasCompletedDaily) {
+    if (dailyQuestions.length > 0 && completedCount === dailyQuestions.length && !hasCompletedDaily) {
       completeDailySet().then(() => {
         setHasCompletedSet(true);
       });
     }
-  }, [completedLocalIds, dailyQuestions, hasCompletedDaily, completeDailySet]);
+  }, [completedCount, dailyQuestions.length, hasCompletedDaily, completeDailySet]);
 
   if (loading) {
     return <div className="container section-padding flex justify-center"><div className="animate-spin text-accent">Loading...</div></div>;
@@ -123,28 +130,22 @@ export default function DailyQuestionPage() {
       ) : (
         <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           <div style={{ textAlign: 'center', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-            <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>{completedLocalIds.size}</span> / {dailyQuestions.length} Completed
+            <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>{completedCount}</span> / {dailyQuestions.length} Completed
           </div>
 
-          {dailyQuestions.map((question, i) => (
-            <ScrollReveal delay={i * 0.1} key={question.id}>
-              <div style={{ opacity: completedLocalIds.has(question.id) ? 0.6 : 1, transition: 'opacity 0.3s ease' }}>
-                <QuestionRenderer 
-                  question={question} 
-                  category="daily" 
-                  onComplete={(points) => {
-                    if (points > 0) {
-                      setCompletedLocalIds(prev => {
-                        const next = new Set(prev);
-                        next.add(question.id);
-                        return next;
-                      });
-                    }
-                  }} 
-                />
-              </div>
-            </ScrollReveal>
-          ))}
+          {dailyQuestions.map((question, i) => {
+            const isCompleted = progress?.question_states?.[question.id]?.status === 'correct' || progress?.question_states?.[question.id]?.status === 'gave_up';
+            return (
+              <ScrollReveal delay={i * 0.1} key={question.id}>
+                <div style={{ opacity: isCompleted ? 0.6 : 1, transition: 'opacity 0.3s ease' }}>
+                  <QuestionRenderer 
+                    question={question} 
+                    category="daily" 
+                  />
+                </div>
+              </ScrollReveal>
+            );
+          })}
         </div>
       )}
     </div>

@@ -71,6 +71,9 @@ export default async function LearnerHome() {
     nextLessonPath = '/roadmap';
   }
 
+  const today = new Date().toISOString().split('T')[0];
+  const hasCompletedDaily = progressData?.last_daily_completed === today;
+
   return (
     <div className="container section-padding" style={{ paddingBottom: '100px' }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4rem', justifyContent: 'space-between' }}>
@@ -104,8 +107,8 @@ export default async function LearnerHome() {
               <Link href={nextLessonPath} className="btn-primary hover-lift" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '0.75rem 1.5rem', fontSize: '1rem', width: '100%', maxWidth: '250px' }}>
                 Continue
               </Link>
-              <Link href="/daily" className="btn-secondary hover-lift" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '0.75rem 1.5rem', fontSize: '1rem', width: '100%', maxWidth: '250px' }}>
-                Daily Questions
+              <Link href="/daily" className={`btn-secondary hover-lift ${hasCompletedDaily ? 'opacity-70' : ''}`} style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '0.75rem 1.5rem', fontSize: '1rem', width: '100%', maxWidth: '250px' }}>
+                {hasCompletedDaily ? 'Daily Completed ✅' : 'Daily Questions'}
               </Link>
             </div>
           </ScrollReveal>

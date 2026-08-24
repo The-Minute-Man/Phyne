@@ -33,7 +33,7 @@ const pageContent = `'use client';
 import React from 'react';
 import LessonNodeLayout from '@/components/LessonNodeLayout';
 import QuestionRenderer from '@/components/QuestionRenderer';
-import { ${unitSlug}Questions } from '@/content/questions/${unitSlug}';
+import { ${unitSlug}Questions } from '@/questions/${unitSlug}';
 
 export default function ${componentName}() {
   const lessonNodes = [
